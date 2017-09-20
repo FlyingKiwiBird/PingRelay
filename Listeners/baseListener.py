@@ -1,9 +1,12 @@
+from Resources.Status import Status
 
 class Listener:
 
     listenerType = None
     client = None
+    config = None
     messageHandler = None
+    status = Status.DISCONNECTED
 
     def connect(self):
         raise NotImplementedError()
@@ -12,7 +15,7 @@ class Listener:
         raise NotImplementedError()
 
     def status(self):
-        raise NotImplementedError()
+        return self.status
 
     def onMessage(self, messageHandler):
         self.messageHandler = messageHandler

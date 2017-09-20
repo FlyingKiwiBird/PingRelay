@@ -10,5 +10,5 @@ class Message:
         self.time = time
 
     def __str__(self):
-        time_str = self.time.strftime("%Y-%m-%d %-I:%M:%S %p")
+        time_str = self.time.strftime("%Y-%m-%d %I:%M:%S %p")
         return "[{0}] <{1}> {2}: {3}".format(time_str, self.channel, self.sender, self.message)
