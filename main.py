@@ -1,13 +1,22 @@
 #!/usr/bin/python
 
-from Listeners.jabberListener import JabberListener
-from Listeners.listenerType import ListenerType
+from Listeners.JabberListener import JabberListener
+from Listeners.ListenerType import ListenerType
+from Resources.ControlServer import ControlServer
+
 from pprint import pprint
 from pathlib import Path
 import toml
 import os
+import zerorpc
 
 def main():
+    #Setup RPC control server
+    control = ControlServer()
+    server = zerorpc.Server(control)
+    server.bind("tcp://0.0.0.0:4242")
+    server.run()
+    
     #Import config from the TOML file
     dir = os.path.dirname(__file__)
     file_path = os.path.join(dir, 'Config.toml')
@@ -32,7 +41,7 @@ def startListeners(listeners):
 
 
 def message(msg):
-    pprint(msg)
+    print(msg)
 
 
 if __name__== "__main__":

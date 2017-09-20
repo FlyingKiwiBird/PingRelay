@@ -1,6 +1,8 @@
-from .baseListener import Listener
-from .listenerType import ListenerType
+from .BaseListener import Listener
+from .ListenerType import ListenerType
+from Resources.Message import Message
 from sleekxmpp import ClientXMPP
+
 
 from pprint import pprint
 
@@ -15,6 +17,7 @@ class JabberListener(Listener):
         self.password = config['password']
         self.host = config['host']
         self.port = config['port']
+
         self.client =  ClientXMPP(self.jid, self.password)
         self.client.add_event_handler("session_start", self.onConnect)
         self.client.add_event_handler("message", self.parseMessage)
@@ -41,4 +44,7 @@ class JabberListener(Listener):
         if self.messageHandler is None:
             return
 
-        self.messageHandler(msg)
+        message = Message(self, msg["body"], msg["mucnick"], msg["mucroom"])
+
+
+        self.messageHandler(message)
