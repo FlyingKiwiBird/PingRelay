@@ -11,12 +11,6 @@ import os
 import zerorpc
 
 def main():
-    #Setup RPC control server
-    control = ControlServer()
-    server = zerorpc.Server(control)
-    server.bind("tcp://0.0.0.0:4242")
-    server.run()
-    
     #Import config from the TOML file
     dir = os.path.dirname(__file__)
     file_path = os.path.join(dir, 'Config.toml')
