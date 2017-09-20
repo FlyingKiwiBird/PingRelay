@@ -2,3 +2,5 @@ toml
 sleekxmpp
 discord.py
 slackclient
+asyncio
+zerorpc
