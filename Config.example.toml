@@ -1,0 +1,9 @@
+#Rename to Config.toml
+
+[[listeners]]
+type = "jabber"
+name = "goonswarm"
+jid = "USERNAME"
+password = "PASSWORD"
+host = "conference.goonfleet.com"
+port = 5222
