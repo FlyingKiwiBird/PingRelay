@@ -21,6 +21,9 @@ class JabberListener(Listener):
         self.host = config['host']
         self.port = config['port']
 
+        jid_parts = self.jid.split("@")
+        self.nick = jid_parts[0]
+
         logging.debug("{0} - Initializing Jabber client for: {1}".format(self.name, self.jid))
         self.client =  ClientXMPP(self.jid, self.password)
         self.client.add_event_handler("session_start", self.onConnect)
@@ -43,14 +46,33 @@ class JabberListener(Listener):
     def onConnect(self, event):
         self.client.sendPresence()
         logging.debug("{0} - Connected to: {1}:{2}".format(self.name, self.host, self.port))
+        self.joinRooms()
+
+    def joinRooms(self):
+        rooms = self.config["room_list"]
+        for r in rooms:
+            room_addr = "{0}@{1}".format(r, self.host)
+            logging.debug("{0} - Attempting to join {1} as {2}".format(self.name, room_addr, self.nick))
+            self.client.plugin['xep_0045'].joinMUC(room_addr, self.nick)
 
     def onDisconnect(self, event):
         logging.warning("{0} - Disconnected from: {1}:{2}".format(self.name, self.host, self.port))
 
     def parseMessage(self, msg):
-        logging.debug("{0} - Got message: {1}".format(self.name, msg))
+        logging.debug("{0} - Got message from Jabber".format(self.name))
         if self.messageHandler is None:
             return
+
+        pprint(msg)
+        msgText = msg["body"]
+        if msg["type"] == "chat":
+            msgChannel = "Direct Message"
+            msgFrom = msg["from"].bare
+        elif msg["type"] == "groupchat":
+            msgChannel = msg["mucroom"]
+            msgFrom = msg["mucnick"]
+        else:
+            logging.warn("{0} - Unknown message type from Jabber: {1}".format(self.name, msg["type"]))
 
         message = Message(self, msg["body"], msg["mucnick"], msg["mucroom"])
 

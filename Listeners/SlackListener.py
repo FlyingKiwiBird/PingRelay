@@ -65,7 +65,7 @@ class SlackListener(Listener):
                                     logging.warn("{0} - Could not get channel info {1}".format(self.name, err))
                                     channel = "Unknown ({0})".format(event["channel"])
                             elif event["channel"].startswith("D"):
-                                channel = "Private Message"
+                                channel = "Direct Message"
                             #Get time
                             timestamp = float(event["ts"])
                             msgTime = datetime.fromtimestamp(timestamp)
