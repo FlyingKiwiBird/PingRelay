@@ -10,6 +10,8 @@ import threading
 import logging
 import time
 
+_log = logging.getLogger("PingRelay")
+
 class SlackListener(Listener):
 
     listenerType = ListenerType.SLACK
@@ -20,18 +22,18 @@ class SlackListener(Listener):
         self.name = config["name"]
         self.token = config["token"]
 
-        logging.info("{0} - Initializing Slack client".format(self.name))
+        _log.info("{0} - Initializing Slack client".format(self.name))
         self.client = SlackClient(self.token)
 
     def connect(self):
-        logging.info("{0} - Connecting to Slack server".format(self.name))
+        _log.info("{0} - Connecting to Slack server".format(self.name))
         if self.client.rtm_connect(with_team_state=False):
-            logging.info("{0} - Connected to Slack server".format(self.name))
+            _log.info("{0} - Connected to Slack server".format(self.name))
             self.slackService = threading.Thread(target=self.slackRTM)
             self.status = Status.CONNECTED
             self.slackService.start()
         else:
-            logging.error("{0} - Connection failed".format(self.name))
+            _log.error("{0} - Connection failed".format(self.name))
             self.status = Status.DISCONNECTED
 
     def slackRTM(self):
@@ -40,7 +42,7 @@ class SlackListener(Listener):
             try:
                 events = self.client.rtm_read()
             except Exception as err:
-                logging.warn("{0} - Could not get RTM events {1}".format(self.name, err))
+                _log.warn("{0} - Could not get RTM events {1}".format(self.name, err))
 
             if events:
                 delay = 0
@@ -50,7 +52,7 @@ class SlackListener(Listener):
                             if "text" not in event:
                                 pass
                             msg = event["text"]
-                            logging.debug("{0} - Got message from Slack RTM: {1}".format(self.name, event))
+                            _log.debug("{0} - Got message from Slack RTM: {1}".format(self.name, event))
                             #Get sender
                             try:
                                 user_info = self.client.api_call("users.info", user=event["user"])
@@ -78,4 +80,4 @@ class SlackListener(Listener):
             else:
                 delay = min(++delay, 10)
             time.sleep(delay)
-        logging.debug("{0} - RTM due to Slack disconnect disconnected".format(self.name))
+        _log.debug("{0} - RTM due to Slack disconnect disconnected".format(self.name))

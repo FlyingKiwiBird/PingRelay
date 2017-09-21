@@ -2,7 +2,9 @@ from .BaseListener import Listener
 from .ListenerType import ListenerType
 from Resources.Message import Message
 from sleekxmpp import ClientXMPP
+
 import logging
+_log = logging.getLogger("PingRelay")
 
 from pprint import pprint
 
@@ -24,7 +26,7 @@ class JabberListener(Listener):
         jid_parts = self.jid.split("@")
         self.nick = jid_parts[0]
 
-        logging.info("{0} - Initializing Jabber client for: {1}".format(self.name, self.jid))
+        _log.info("{0} - Initializing Jabber client for: {1}".format(self.name, self.jid))
         self.client =  ClientXMPP(self.jid, self.password)
         self.client.add_event_handler("session_start", self.onConnect)
         self.client.add_event_handler("disconnected", self.onDisconnect)
@@ -32,11 +34,11 @@ class JabberListener(Listener):
         self.client.register_plugin("xep_0045")  # Multi-User Chat
 
     def connect(self):
-        logging.info("{0} - Connecting to: {1}:{2}".format(self.name, self.host, self.port))
+        _log.info("{0} - Connecting to: {1}:{2}".format(self.name, self.host, self.port))
         try:
             self.client.connect((self.host, self.port))
         except Exception as err:
-            logging.error("{0} - Connection failed to: {1}:{2}".format(self.name, self.host, self.port))
+            _log.error("{0} - Connection failed to: {1}:{2}".format(self.name, self.host, self.port))
             return
         self.client.process()
 
@@ -45,21 +47,21 @@ class JabberListener(Listener):
 
     def onConnect(self, event):
         self.client.sendPresence()
-        logging.info("{0} - Connected to: {1}:{2}".format(self.name, self.host, self.port))
+        _log.info("{0} - Connected to: {1}:{2}".format(self.name, self.host, self.port))
         self.joinRooms()
 
     def joinRooms(self):
         rooms = self.config["room_list"]
         for r in rooms:
             room_addr = "{0}@{1}".format(r, self.host)
-            logging.debug("{0} - Attempting to join {1} as {2}".format(self.name, room_addr, self.nick))
+            _log.debug("{0} - Attempting to join {1} as {2}".format(self.name, room_addr, self.nick))
             self.client.plugin['xep_0045'].joinMUC(room_addr, self.nick)
 
     def onDisconnect(self, event):
         logging.warning("{0} - Disconnected from: {1}:{2}".format(self.name, self.host, self.port))
 
     def parseMessage(self, msg):
-        logging.debug("{0} - Got message from Jabber: {1}".format(self.name, msg))
+        _log.debug("{0} - Got message from Jabber: {1}".format(self.name, msg))
         if self.messageHandler is None:
             return
 

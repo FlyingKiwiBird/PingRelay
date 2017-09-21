@@ -16,3 +16,13 @@ room_list = ["A", "B", "C"]
 type = "slack"
 name = "example slack"
 token = ""
+room_list = ["A", "B", "C"]
+
+#Note: You only need one discord entry per login, each login will capter the specified servers
+[[listeners]]
+type = "discord"
+name = "example discord"
+email = ""
+password = ""
+servers = ["A", "B", "C"]
+room_list = ["A", "B", "C"]
