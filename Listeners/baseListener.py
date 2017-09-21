@@ -8,6 +8,9 @@ class Listener:
     messageHandler = None
     status = Status.DISCONNECTED
 
+    def __init__(self, config):
+        self.config = config
+
     def connect(self):
         raise NotImplementedError()
 

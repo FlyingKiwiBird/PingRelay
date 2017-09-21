@@ -13,7 +13,7 @@ class JabberListener(Listener):
     listenerType = ListenerType.JABBER
 
     def __init__(self, config):
-        self.config = config
+        super().__init__(config)
 
         self.name = config['name']
         self.jid = config['jid']
@@ -24,7 +24,7 @@ class JabberListener(Listener):
         jid_parts = self.jid.split("@")
         self.nick = jid_parts[0]
 
-        logging.debug("{0} - Initializing Jabber client for: {1}".format(self.name, self.jid))
+        logging.info("{0} - Initializing Jabber client for: {1}".format(self.name, self.jid))
         self.client =  ClientXMPP(self.jid, self.password)
         self.client.add_event_handler("session_start", self.onConnect)
         self.client.add_event_handler("disconnected", self.onDisconnect)
@@ -32,7 +32,7 @@ class JabberListener(Listener):
         self.client.register_plugin("xep_0045")  # Multi-User Chat
 
     def connect(self):
-        logging.debug("{0} - Connecting to: {1}:{2}".format(self.name, self.host, self.port))
+        logging.info("{0} - Connecting to: {1}:{2}".format(self.name, self.host, self.port))
         try:
             self.client.connect((self.host, self.port))
         except Exception as err:
@@ -45,7 +45,7 @@ class JabberListener(Listener):
 
     def onConnect(self, event):
         self.client.sendPresence()
-        logging.debug("{0} - Connected to: {1}:{2}".format(self.name, self.host, self.port))
+        logging.info("{0} - Connected to: {1}:{2}".format(self.name, self.host, self.port))
         self.joinRooms()
 
     def joinRooms(self):
@@ -66,7 +66,8 @@ class JabberListener(Listener):
         msgText = msg["body"]
         if msg["type"] == "chat":
             msgChannel = "Direct Message"
-            msgFrom = msg["from"].bare
+            msgFromParts = msg["from"].bare.split("@")
+            msgFrom = msgFromParts[0]
         elif msg["type"] == "groupchat":
             msgChannelParts = msg["mucroom"].split("@")
             msgChannel = msgChannelParts[0]

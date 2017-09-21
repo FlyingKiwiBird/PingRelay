@@ -15,18 +15,18 @@ class SlackListener(Listener):
     listenerType = ListenerType.SLACK
 
     def __init__(self, config):
-        self.config = config
+        super().__init__(config)
 
         self.name = config["name"]
         self.token = config["token"]
 
-        logging.debug("{0} - Initializing Slack client".format(self.name))
+        logging.info("{0} - Initializing Slack client".format(self.name))
         self.client = SlackClient(self.token)
 
     def connect(self):
-        logging.debug("{0} - Connecting to Slack server".format(self.name))
+        logging.info("{0} - Connecting to Slack server".format(self.name))
         if self.client.rtm_connect(with_team_state=False):
-            logging.debug("{0} - Connected to Slack server".format(self.name))
+            logging.info("{0} - Connected to Slack server".format(self.name))
             self.slackService = threading.Thread(target=self.slackRTM)
             self.status = Status.CONNECTED
             self.slackService.start()
@@ -47,6 +47,8 @@ class SlackListener(Listener):
                 if self.messageHandler is not None:
                     for event in events:
                         if event["type"] == "message":
+                            if "text" not in event:
+                                pass
                             msg = event["text"]
                             logging.debug("{0} - Got message from Slack RTM: {1}".format(self.name, event))
                             #Get sender
