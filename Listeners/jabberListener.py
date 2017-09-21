@@ -59,17 +59,17 @@ class JabberListener(Listener):
         logging.warning("{0} - Disconnected from: {1}:{2}".format(self.name, self.host, self.port))
 
     def parseMessage(self, msg):
-        logging.debug("{0} - Got message from Jabber".format(self.name))
+        logging.debug("{0} - Got message from Jabber: {0}".format(self.name, msg))
         if self.messageHandler is None:
             return
 
-        pprint(msg)
         msgText = msg["body"]
         if msg["type"] == "chat":
             msgChannel = "Direct Message"
             msgFrom = msg["from"].bare
         elif msg["type"] == "groupchat":
-            msgChannel = msg["mucroom"]
+            msgChannelParts = msg["mucroom"].split("@")
+            msgChannel = msgChannelParts[0]
             msgFrom = msg["mucnick"]
         else:
             logging.warn("{0} - Unknown message type from Jabber: {1}".format(self.name, msg["type"]))

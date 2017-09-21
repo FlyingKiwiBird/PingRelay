@@ -48,7 +48,7 @@ class SlackListener(Listener):
                     for event in events:
                         if event["type"] == "message":
                             msg = event["text"]
-                            logging.debug("{0} - Got message from Slack RTM".format(self.name))
+                            logging.debug("{0} - Got message from Slack RTM: {1}".format(self.name, event))
                             #Get sender
                             try:
                                 user_info = self.client.api_call("users.info", user=event["user"])
