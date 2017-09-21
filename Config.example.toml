@@ -1,9 +1,18 @@
 #Rename to Config.toml
 
+log_level = "DEBUG"
+
 [[listeners]]
 type = "jabber"
-name = "goonswarm"
-jid = "USERNAME"
-password = "PASSWORD"
-host = "conference.goonfleet.com"
+name = "example jabber"
+jid = ""
+password = ""
+host = ""
 port = 5222
+room_list = ["A", "B", "C"]
+
+
+[[listeners]]
+type = "slack"
+name = "example slack"
+token = ""
