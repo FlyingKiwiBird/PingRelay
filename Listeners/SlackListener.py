@@ -9,6 +9,7 @@ import asyncio
 import threading
 import logging
 import time
+import re
 
 _log = logging.getLogger("PingRelay")
 
@@ -41,6 +42,17 @@ class SlackListener(Listener):
         else:
             _log.error("{0} - Connection failed".format(self.name))
             self.status = Status.DISCONNECTED
+
+
+
+    def replace_user_id_with_name(self, match):
+        user_id = match.group(1)
+        try:
+            user_info = self.client.api_call("users.info", user=user_id)
+            return "@" + user_info["user"]["name"]
+        except Exception as err:
+            _log.warn("{0} - Could not get user name for {1}".format(self.name, user_id))
+            return user_id
 
     def slackRTM(self):
         delay = 0
@@ -79,6 +91,9 @@ class SlackListener(Listener):
                             #Get time
                             timestamp = float(event["ts"])
                             msgTime = datetime.fromtimestamp(timestamp)
+
+                            #Username replacement
+                            msg = re.sub(r"<@([\w\d]+)>", self.replace_user_id_with_name, msg)
 
                             message = Message(self, msg, user, channel, self.server, msgTime)
                             self.messageHandler(message)
