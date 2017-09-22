@@ -5,10 +5,12 @@ from Resources.Status import Status
 import discord
 from discord import User
 
+from pprint import pprint
 from datetime import datetime
 import asyncio
 import threading
 import time
+import re
 
 import logging
 _log = logging.getLogger("PingRelay")
@@ -43,7 +45,7 @@ class DiscordListener(Listener):
 
     async def on_message(self, message):
 
-        _log.debug("{0} - Got message from discord {1}".format(self.name, message.content))
+        _log.debug("{0} - Got message from discord: \"{1}\"".format(self.name, message.content))
         if self.messageHandler is None:
             return
 
@@ -57,8 +59,24 @@ class DiscordListener(Listener):
         else:
             channel = message.channel.name
             server = message.channel.server
-        text = message.content
+
+        #replace usernames
+        text = self.get_names_from_mentions(message)
+
         sent_at = message.timestamp
         msg = Message(self, text, sender, channel, server, sent_at)
 
         self.messageHandler(msg)
+
+    def get_names_from_mentions(self, message):
+        mentions = message.mentions
+        text = message.content
+        matches = re.finditer(r"<@[^\d]?(\d+)>", text)
+
+        for match in matches:
+            full_match = match.group()
+            user_id = match.group(1)
+            user = next((mention for mention in mentions if mention.id == user_id), user_id)
+            text = text.replace(full_match, "@" + user.display_name)
+
+        return text
