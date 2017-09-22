@@ -24,6 +24,12 @@ class SlackListener(Listener):
 
         _log.info("{0} - Initializing Slack client".format(self.name))
         self.client = SlackClient(self.token)
+        try:
+            server_info = self.client.api_call("team.info")
+            self.server = server_info["team"]["name"]
+        except Exception as err:
+            _log.warn("{0} - Could not get server name: {1}".format(self.name, err))
+
 
     def connect(self):
         _log.info("{0} - Connecting to Slack server".format(self.name))
@@ -58,7 +64,7 @@ class SlackListener(Listener):
                                 user_info = self.client.api_call("users.info", user=event["user"])
                                 user = user_info["user"]["name"]
                             except Exception as err:
-                                logging.warn("{0} - Could not get user info {1}".format(self.name, err))
+                                _log.warn("{0} - Could not get user info {1}".format(self.name, err))
                                 user = "Unknown ({0})".format(event["user"])
                             #Get channel
                             if event["channel"].startswith("C"):
@@ -66,7 +72,7 @@ class SlackListener(Listener):
                                     channel_info = self.client.api_call("channels.info", channel=event["channel"])
                                     channel = channel_info["channel"]["name"]
                                 except Exception as err:
-                                    logging.warn("{0} - Could not get channel info {1}".format(self.name, err))
+                                    _log.warn("{0} - Could not get channel info {1}".format(self.name, err))
                                     channel = "Unknown ({0})".format(event["channel"])
                             elif event["channel"].startswith("D"):
                                 channel = "Direct Message"
@@ -74,7 +80,7 @@ class SlackListener(Listener):
                             timestamp = float(event["ts"])
                             msgTime = datetime.fromtimestamp(timestamp)
 
-                            message = Message(self, msg, user, channel, msgTime)
+                            message = Message(self, msg, user, channel, self.server, msgTime)
                             self.messageHandler(message)
 
             else:

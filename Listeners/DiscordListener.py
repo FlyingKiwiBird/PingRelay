@@ -39,7 +39,26 @@ class DiscordListener(Listener):
             logging.warn("{0} - Discord has disconnected".format(self.name))
 
     async def on_ready(self):
-        _log.info("{0} - Connected to discord")
+        _log.info("{0} - Connected to discord".format(self.name))
 
     async def on_message(self, message):
-        pprint(message)
+
+        _log.debug("{0} - Got message from discord {1}".format(self.name, message.content))
+        if self.messageHandler is None:
+            return
+
+        if message.content is None:
+            return
+
+        sender = message.author.display_name
+        if message.channel.is_private:
+            channel = "Direct Message"
+            server = "Discord"
+        else:
+            channel = message.channel.name
+            server = message.channel.server
+        text = message.content
+        sent_at = message.timestamp
+        msg = Message(self, text, sender, channel, server, sent_at)
+
+        self.messageHandler(msg)

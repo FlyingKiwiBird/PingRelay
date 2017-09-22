@@ -77,7 +77,7 @@ class JabberListener(Listener):
         else:
             logging.warn("{0} - Unknown message type from Jabber: {1}".format(self.name, msg["type"]))
 
-        message = Message(self, msgText, msgFrom, msgChannel)
+        message = Message(self, msgText, msgFrom, msgChannel, self.host)
 
 
         self.messageHandler(message)
