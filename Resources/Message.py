@@ -10,6 +10,13 @@ class Message:
         self.server = server
         self.time = time
 
+        self.has_alert = False
+        self.alerts = []
+
     def __str__(self):
         time_str = self.time.strftime("%Y-%m-%d %I:%M:%S %p")
         return "[{0}] {1}>{2}>{3}: {4}".format(time_str, self.server, self.channel, self.sender, self.message)
+
+    def add_alert(self, alert):
+        self.has_alert = True
+        self.alerts.append(alert)
