@@ -15,7 +15,7 @@ class JabberListener(Listener):
     listenerType = ListenerType.JABBER
 
     def __init__(self, config):
-        super().__init__(config)
+        super(JabberListener, self).__init__(config)
 
         self.name = config['name']
         self.jid = config['jid']
@@ -41,9 +41,11 @@ class JabberListener(Listener):
             _log.error("{0} - Connection failed to: {1}:{2}".format(self.name, self.host, self.port))
             return
         self.client.process(block=True)
+        super(JabberListener, self).finished()
 
     def stop(self):
-        self.client.disconnect()
+        _log.info("Stopping Jabber")
+        self.client.disconnect(wait=True)
 
     def onConnect(self, event):
         self.client.sendPresence()

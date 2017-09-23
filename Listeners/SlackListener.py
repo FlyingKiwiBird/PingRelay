@@ -18,7 +18,7 @@ class SlackListener(Listener):
     listenerType = ListenerType.SLACK
 
     def __init__(self, config):
-        super().__init__(config)
+        super(SlackListener, self).__init__(config)
         self.running = False
 
         self.name = config["name"]
@@ -39,12 +39,14 @@ class SlackListener(Listener):
         if self.client.rtm_connect(with_team_state=False):
             _log.info("{0} - Connected to Slack server".format(self.name))
             self.slackRTM()
+            super(SlackListener, self).finished()
         else:
             _log.error("{0} - Connection failed".format(self.name))
             self.running = False
 
 
-    def stop():
+    def stop(self):
+        _log.info("Stopping slack")
         self.running = False
 
     def replace_user_id_with_name(self, match):

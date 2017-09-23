@@ -15,6 +15,7 @@ class ThreadedService(threading.Thread):
         def start(self):
             self.start_time = datetime.now()
             self.started = True
+            self.autoreconnect = True
             super(ThreadedService, self).start()
 
         def run(self):

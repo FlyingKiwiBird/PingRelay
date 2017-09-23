@@ -12,5 +12,10 @@ class Listener(ThreadedService):
         super(Listener, self).__init__()
         self.config = config
 
-    def onMessage(self, messageHandler):
+    def on_message_received(self, messageHandler):
         self.messageHandler = messageHandler
+
+        def __str__(self):
+            if self.name is not None:
+                return self.name
+            return "Unknown"

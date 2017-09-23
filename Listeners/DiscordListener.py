@@ -20,7 +20,7 @@ class DiscordListener(Listener):
     listenerType = ListenerType.DISCORD
 
     def __init__(self, config):
-        super().__init__(config)
+        super(DiscordListener, self).__init__(config)
         self.email = config["email"]
         self.password = config["password"]
         self.name = config["name"]
@@ -34,9 +34,11 @@ class DiscordListener(Listener):
         self.client.event(self.on_ready)
         self.client.event(self.on_message)
         self.loop.run_until_complete(self.runDiscord())
+        super(DiscordListener, self).finished()
 
     def stop(self):
-        self.client.close()
+        _log.info("Stopping Discord")
+        asyncio.run_coroutine_threadsafe(self.client.logout(), self.loop)
 
     async def runDiscord(self):
         try:
@@ -48,8 +50,10 @@ class DiscordListener(Listener):
         _log.info("{0} - Connected to discord".format(self.name))
 
     async def on_message(self, message):
-
-        _log.debug("{0} - Got message from discord: \"{1}\"".format(self.name, message.content))
+        try:
+            _log.debug("{0} - Got message from discord: \"{1}\"".format(self.name, message.content))
+        except Exception:
+            _log.debug("{0} - Got message from discord: (can't display)")
         if self.messageHandler is None:
             return
 
@@ -63,6 +67,10 @@ class DiscordListener(Listener):
         else:
             channel = message.channel.name
             server = message.channel.server
+            #Server filter
+            if "servers" in self.config:
+                if server not in self.config["servers"]:
+                    return
 
         #replace usernames
         text = self.get_names_from_mentions(message)

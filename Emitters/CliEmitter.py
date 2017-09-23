@@ -11,7 +11,7 @@ class CliEmitter(Emitter):
     emitterType = EmitterType.CLI
 
     def __init__(self, config):
-        super().__init__(config)
+        super(CliEmitter, self).__init__(config)
         self.online = True
         _log.debug("CLI emitter started")
 
