@@ -8,14 +8,14 @@ class ThreadedService(threading.Thread):
         start_time = None
         end_time = None
         started = False
-        
+
         def __init__(self):
             threading.Thread.__init__(self)
 
         def start(self):
             self.start_time = datetime.now()
             self.started = True
-            super().start()
+            super(ThreadedService, self).start()
 
         def run(self):
             raise NotImplementedError()
