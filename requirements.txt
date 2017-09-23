@@ -3,4 +3,4 @@ sleekxmpp
 discord.py
 slackclient
 asyncio
-zerorpc
+websockets

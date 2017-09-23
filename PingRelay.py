@@ -5,15 +5,25 @@ from pathlib import Path
 import logging
 import toml
 from datetime import datetime
+from threading import Thread
 from App import App
+from ControlServer import ControlServer
 
 
 def main():
     dir = os.path.dirname(__file__)
     config = loadConfig(dir)
     initLogging(dir, config)
+
+    #Run app on a new thread
     app = App(config)
-    app.run()
+    thread = Thread(target =app.run)
+    thread.start()
+
+    #Run control server on new thread
+    server = ControlServer(app, config)
+    server.start()
+
 
 def initLogging(dir, config):
     time_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

@@ -2,7 +2,6 @@ from Listeners.JabberListener import JabberListener
 from Listeners.SlackListener import SlackListener
 from Listeners.DiscordListener import DiscordListener
 from Listeners.ListenerType import ListenerType
-from Resources.ControlServer import ControlServer
 
 from pprint import pprint
 from datetime import datetime
