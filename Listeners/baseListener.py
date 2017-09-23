@@ -1,6 +1,6 @@
-import threading
+from Resources.ThreadedService import ThreadedService
 
-class Listener(threading.Thread):
+class Listener(ThreadedService):
 
     listenerType = None
     client = None
@@ -9,14 +9,8 @@ class Listener(threading.Thread):
     messageHandler = None
 
     def __init__(self, config):
-        threading.Thread.__init__(self)
+        super(Listener, self).__init__()
         self.config = config
-
-    def run(self):
-        raise NotImplementedError()
-
-    def stop(self):
-        raise NotImplementedError()
 
     def onMessage(self, messageHandler):
         self.messageHandler = messageHandler

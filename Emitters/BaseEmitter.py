@@ -1,20 +1,14 @@
-import threading
+from Resources.ThreadedService import ThreadedService
 
-class Emitter(threading.Thread):
+class Emitter(ThreadedService):
 
     emitType = None
     name = None
 
     def __init__(self, config):
-        threading.Thread.__init__(self)
+        super(Emitter, self).__init__()
         self.config = config
         self.outbox = []
-
-    def run(self):
-        raise NotImplementedError()
-
-    def stop(self):
-        raise NotImplementedError()
 
     def emit(self, message):
         self.outbox.append(message)
