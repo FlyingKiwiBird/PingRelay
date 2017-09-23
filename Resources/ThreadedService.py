@@ -26,11 +26,11 @@ class ThreadedService(threading.Thread):
 
         #Functions for statistics
         def status(self):
-            if started == False:
-                return ThreadStatus.Ready
+            if self.started == False:
+                return ThreadStatus.Ready.value
             if self.is_alive():
-                return ThreadStatus.Running
-            return ThreadStatus.Complete
+                return ThreadStatus.Running.value
+            return ThreadStatus.Complete.value
 
         def uptime(self):
             if self.start_time is None:

@@ -40,7 +40,7 @@ class JabberListener(Listener):
         except Exception as err:
             _log.error("{0} - Connection failed to: {1}:{2}".format(self.name, self.host, self.port))
             return
-        self.client.process()
+        self.client.process(block=True)
 
     def stop(self):
         self.client.disconnect()

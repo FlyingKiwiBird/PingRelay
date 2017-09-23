@@ -30,14 +30,16 @@ class ControlServer(threading.Thread):
 
 
     def stop(self):
+        self.sever_runner.close()
         self.running = False
 
     async def server(self, websocket, path):
-        while self.running:
+        while self.running and websocket.open:
             try:
                 message_json = await websocket.recv()
             except Exception as err:
                 _log.debug("A connection was closed: {0}".format(err))
+                break
             _log.debug("Got message: {0}".format(message_json))
             try:
                 message = json.loads(message_json)
@@ -61,8 +63,15 @@ class ControlServer(threading.Thread):
             _log.debug("A connection was closed: {0}".format(err))
 
     async def action_get_listeners(self, websocket, message):
-        listener_names = [l.name for l in self.app.listeners]
-        response = {"Status": "OK", "Listeners": listener_names}
+        listener_details = []
+        for listener in self.app.listeners:
+            listener_info = {}
+            listener_info["name"] = listener.name
+            listener_info["status"] = str(listener.status())
+            listener_info["uptime"] = str(listener.uptime())
+            listener_details.append(listener_info)
+
+        response = {"Status": "OK", "Listeners": listener_details}
         await self.send(websocket, response)
 
     async def action_disconnect(self, websocket, message):
