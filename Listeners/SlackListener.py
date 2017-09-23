@@ -1,7 +1,7 @@
 from .BaseListener import Listener
 from .ListenerType import ListenerType
 from Resources.Message import Message
-from Resources.Status import Status
+
 from slackclient import SlackClient
 
 from datetime import datetime
@@ -19,6 +19,7 @@ class SlackListener(Listener):
 
     def __init__(self, config):
         super().__init__(config)
+        self.running = False
 
         self.name = config["name"]
         self.token = config["token"]
@@ -28,22 +29,23 @@ class SlackListener(Listener):
         try:
             server_info = self.client.api_call("team.info")
             self.server = server_info["team"]["name"]
+            self.running = True
         except Exception as err:
             _log.warn("{0} - Could not get server name: {1}".format(self.name, err))
 
 
-    def connect(self):
+    def run(self):
         _log.info("{0} - Connecting to Slack server".format(self.name))
         if self.client.rtm_connect(with_team_state=False):
             _log.info("{0} - Connected to Slack server".format(self.name))
-            self.slackService = threading.Thread(target=self.slackRTM)
-            self.status = Status.CONNECTED
-            self.slackService.start()
+            self.slackRTM()
         else:
             _log.error("{0} - Connection failed".format(self.name))
-            self.status = Status.DISCONNECTED
+            self.running = False
 
 
+    def stop():
+        self.running = False
 
     def replace_user_id_with_name(self, match):
         user_id = match.group(1)
@@ -56,7 +58,7 @@ class SlackListener(Listener):
 
     def slackRTM(self):
         delay = 0
-        while self.status == Status.CONNECTED:
+        while self.running:
             try:
                 events = self.client.rtm_read()
             except Exception as err:

@@ -17,10 +17,8 @@ def main():
 
     #Run app on a new thread
     app = App(config)
-    thread = Thread(target =app.run)
-    thread.start()
+    app.run()
 
-    #Run control server on new thread
     server = ControlServer(app, config)
     server.start()
 

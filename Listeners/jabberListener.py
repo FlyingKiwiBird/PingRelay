@@ -33,7 +33,7 @@ class JabberListener(Listener):
         self.client.add_event_handler("message", self.parseMessage)
         self.client.register_plugin("xep_0045")  # Multi-User Chat
 
-    def connect(self):
+    def run(self):
         _log.info("{0} - Connecting to: {1}:{2}".format(self.name, self.host, self.port))
         try:
             self.client.connect((self.host, self.port))
@@ -42,7 +42,7 @@ class JabberListener(Listener):
             return
         self.client.process()
 
-    def disconnect(self):
+    def stop(self):
         self.client.disconnect()
 
     def onConnect(self, event):

@@ -18,7 +18,11 @@ class App():
 
 
     def run(self):
-        self.startListeners(self.config['listeners'])
+        if 'listeners' in self.config:
+            self.startListeners(self.config['listeners'])
+
+        if 'relays' in self.config:
+            self.startRelays(self.config['relays'])
 
     def startListeners(self, listeners):
         self.listeners = []
@@ -35,11 +39,14 @@ class App():
                 else:
                     pass
                 listener.onMessage(self.message)
-                listener.connect()
+                listener.start()
                 self.listeners.append(listener)
             except Exception as err:
-                _log.error("Could not start listener: {0}".format(err))
+                _log.error("Could not start listener '{0}': {1}".format(l['name'], err))
                 pass
+
+    def startRelays(self, relays):
+        self.relays = []
 
     def message(self, msg):
         print(msg)

@@ -1,24 +1,22 @@
-from Resources.Status import Status
+import threading
 
-class Listener:
+class Listener(threading.Thread):
 
     listenerType = None
     client = None
     config = None
+    name = None
     messageHandler = None
-    status = Status.DISCONNECTED
 
     def __init__(self, config):
+        threading.Thread.__init__(self)
         self.config = config
 
-    def connect(self):
+    def run(self):
         raise NotImplementedError()
 
-    def disconnect(self):
+    def stop(self):
         raise NotImplementedError()
-
-    def status(self):
-        return self.status
 
     def onMessage(self, messageHandler):
         self.messageHandler = messageHandler

@@ -1,7 +1,7 @@
 from .BaseListener import Listener
 from .ListenerType import ListenerType
 from Resources.Message import Message
-from Resources.Status import Status
+
 import discord
 from discord import User
 
@@ -24,21 +24,25 @@ class DiscordListener(Listener):
         self.email = config["email"]
         self.password = config["password"]
         self.name = config["name"]
-        self.client = discord.Client()
+        self.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self.loop)
+        self.client = discord.Client(loop=self.loop)
         _log.info("{0} - Initializing Discord client".format(self.name))
 
-    def connect(self):
+    def run(self):
         _log.info("{0} - Signing into Discord with user {1}".format(self.name, self.email))
         self.client.event(self.on_ready)
         self.client.event(self.on_message)
-        self.clientLoop = asyncio.get_event_loop()
-        self.clientLoop.run_until_complete(self.runDiscord())
+        self.loop.run_until_complete(self.runDiscord())
+
+    def stop(self):
+        self.client.close()
 
     async def runDiscord(self):
         try:
             await self.client.start(self.email, self.password)
         except Exception as err:
-            logging.warn("{0} - Discord has disconnected".format(self.name))
+            logging.warn("{0} - Discord has disconnected: {1}".format(self.name, err))
 
     async def on_ready(self):
         _log.info("{0} - Connected to discord".format(self.name))
