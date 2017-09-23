@@ -66,10 +66,12 @@ class DiscordListener(Listener):
             server = "Discord"
         else:
             channel = message.channel.name
-            server = message.channel.server
+            server = str(message.channel.server)
             #Server filter
             if "servers" in self.config:
-                if server not in self.config["servers"]:
+                servers = self.config["servers"]
+                if server not in servers:
+                    _log.debug("{0} - Server '{1}' is not listened to: {2}".format(self.name, server, self.config["servers"]))
                     return
 
         #replace usernames

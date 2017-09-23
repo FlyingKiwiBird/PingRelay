@@ -32,13 +32,6 @@ class App():
         if 'listeners' in self.config:
             self.startListeners(self.config['listeners'])
 
-        time.sleep(5)
-
-        for listener in self.listeners:
-            listener.stop()
-
-
-
     def startListeners(self, listeners):
         for l in listeners:
             try:
