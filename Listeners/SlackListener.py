@@ -73,8 +73,11 @@ class SlackListener(Listener):
                         if event["type"] == "message":
                             if "text" not in event:
                                 pass
-                            msg = event["text"]
-                            _log.debug("{0} - Got message from Slack RTM: {1}".format(self.name, event))
+                            try:
+                                msg = event["text"]
+                                _log.debug("{0} - Got message from Slack RTM: {1}".format(self.name, msg))
+                            except Exception:
+                                _log.debug("{0} - Got message from Slack RTM: (Can't display)".format(self.name))
                             #Get sender
                             try:
                                 user_info = self.client.api_call("users.info", user=event["user"])
@@ -90,6 +93,10 @@ class SlackListener(Listener):
                                 except Exception as err:
                                     _log.warn("{0} - Could not get channel info {1}".format(self.name, err))
                                     channel = "Unknown ({0})".format(event["channel"])
+                                #Channel filter
+                                if "channel_list" in self.config:
+                                    if channel not in self.config["channel_list"]
+                                        pass
                             elif event["channel"].startswith("D"):
                                 channel = "Direct Message"
                             #Get time

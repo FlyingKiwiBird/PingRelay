@@ -67,12 +67,14 @@ class DiscordListener(Listener):
         else:
             channel = message.channel.name
             server = str(message.channel.server)
-            #Server filter
-            if "servers" in self.config:
-                servers = self.config["servers"]
-                if server not in servers:
-                    _log.debug("{0} - Server '{1}' is not listened to: {2}".format(self.name, server, self.config["servers"]))
+            channel_id = message.channel.id
+            #Channel filter
+            if "channel_list" in self.config:
+                if channel_id not in self.config["channel_list"]:
+                    _log.debug("{0} - Channel '{1}' on '{2}' is not listened to".format(self.name, channel, server))
                     return
+            #room filter
+
 
         #replace usernames
         text = self.get_names_from_mentions(message)

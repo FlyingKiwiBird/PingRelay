@@ -53,7 +53,7 @@ class JabberListener(Listener):
         self.joinRooms()
 
     def joinRooms(self):
-        rooms = self.config["room_list"]
+        rooms = self.config["channel_list"]
         for r in rooms:
             room_addr = "{0}@{1}".format(r, self.host)
             _log.debug("{0} - Attempting to join {1} as {2}".format(self.name, room_addr, self.nick))
@@ -63,7 +63,10 @@ class JabberListener(Listener):
         logging.warning("{0} - Disconnected from: {1}:{2}".format(self.name, self.host, self.port))
 
     def parseMessage(self, msg):
-        _log.debug("{0} - Got message from Jabber: {1}".format(self.name, msg))
+        try:
+            _log.debug("{0} - Got message from Jabber: {1}".format(self.name, msg))
+        except Exception:
+            _log.debug("{0} - Got message from Jabber: (Can't display)".format(self.name))
         if self.messageHandler is None:
             return
 

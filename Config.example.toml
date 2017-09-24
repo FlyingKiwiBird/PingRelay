@@ -9,14 +9,14 @@ jid = ""
 password = ""
 host = ""
 port = 5222
-room_list = ["A", "B", "C"]
+channel_list = ["A", "B", "C"]
 
 
 [[listeners]]
 type = "slack"
 name = "example slack"
 token = ""
-room_list = ["A", "B", "C"]
+channel_list = ["A", "B", "C"]
 
 #Note: You only need one discord entry per login, each login will capter the specified servers
 [[listeners]]
@@ -25,4 +25,4 @@ name = "example discord"
 email = ""
 password = ""
 servers = ["A", "B", "C"]
-room_list = ["A", "B", "C"]
+channel_list = ["A", "B", "C"]
