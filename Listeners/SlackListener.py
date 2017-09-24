@@ -95,7 +95,8 @@ class SlackListener(Listener):
                                     channel = "Unknown ({0})".format(event["channel"])
                                 #Channel filter
                                 if "channel_list" in self.config:
-                                    if channel not in self.config["channel_list"]
+                                    if channel not in self.config["channel_list"]:
+                                        _log.debug("{0} - Channel '{1}' is not listened to".format(self.name, channel))
                                         pass
                             elif event["channel"].startswith("D"):
                                 channel = "Direct Message"

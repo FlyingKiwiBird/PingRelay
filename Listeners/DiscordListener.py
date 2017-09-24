@@ -71,7 +71,7 @@ class DiscordListener(Listener):
             #Channel filter
             if "channel_list" in self.config:
                 if channel_id not in self.config["channel_list"]:
-                    _log.debug("{0} - Channel '{1}' on '{2}' is not listened to".format(self.name, channel, server))
+                    _log.debug("{0} - Channel '{1} ({2})' on '{3}' is not listened to".format(self.name, channel, channel_id, server))
                     return
             #room filter
 
