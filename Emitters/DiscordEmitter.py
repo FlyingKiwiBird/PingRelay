@@ -42,25 +42,37 @@ class DiscordEmitter(Emitter):
 
     async def send_message(self, message):
         _log.debug("{0} - Got message to emit".format(self.name))
-        channel = self.get_channel(message)
-        await self.client.send_message(channel, content=message)
+        channels = self.get_channels(message)
+        _log.debug("{0} - Sending message to channels: {1}", self.name, channels)
+        for channel in channels:
+            await self.client.send_message(channel, content=message)
+            _log.debug("{0} - Sent message to channel '{1}' on '{2}'", self.name, channel.name, channel.server.name)
 
-    def get_channel(self, message):
-        channel_id = self.channel
+    def get_channels(self, message):
+        default_channel_id = self.channel
         if "channels" in self.config:
             for ch in self.config["channels"]:
-                if ch["from_server"] == message.server:
-                    channel_id = ch["to_channel"]
+                if message.server in ch["from_server_list"]:
+                    channel_list = ch["to_channel_list"]
                     break
 
-        channel = self.client.get_channel(channel_id)
-        if channel is None:
-            _log.error("{0} - The channel ID '{1}' is not valid".format(self.name, channel_id))
-            #Fallbak to default channel
-            if channel_id != self.channel:
-                channel = self.client.get_channel(self.channel)
+        channels = []
+        for channel_id in channel_list:
+            channel = self.client.get_channel(channel_id)
+            if channel is None:
+                _log.error("{0} - The channel ID '{1}' is not valid".format(self.name, channel_id))
+            else:
+                channels.append(channel)
 
-        return channel
+        #Send to default if no match
+        if(len(channels) == 0):
+            channel = self.client.get_channel(default_channel_id)
+            if channel is None:
+                _log.error("{0} - The default channel (ID = '{1}') is not valid".format(self.name, default_channel_id))
+            else:
+                channels.append(channel)
+
+        return channels
 
 
 
