@@ -43,10 +43,13 @@ class DiscordEmitter(Emitter):
     async def send_message(self, message):
         _log.debug("{0} - Got message to emit".format(self.name))
         channels = self.get_channels(message)
-        _log.debug("{0} - Sending message to channels: {1}", self.name, channels)
+        _log.debug("{0} - Sending message to {1} channels".format(self.name, str(len(channels))))
         for channel in channels:
-            await self.client.send_message(channel, content=message)
-            _log.debug("{0} - Sent message to channel '{1}' on '{2}'", self.name, channel.name, channel.server.name)
+            try:
+                await self.client.send_message(channel, content=message)
+                _log.debug("{0} - Sent message to channel '{1}' on '{2}'".format(self.name, channel.name, channel.server.name))
+            except Exception as err:
+                _log.error("{0} - Could not send message: {1}".format(self.name, err))
 
     def get_channels(self, message):
         default_channel_id = self.channel
