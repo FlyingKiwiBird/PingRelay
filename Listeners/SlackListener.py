@@ -72,7 +72,7 @@ class SlackListener(Listener):
                     for event in events:
                         if event["type"] == "message":
                             if "text" not in event:
-                                pass
+                                continue
                             try:
                                 msg = event["text"]
                                 _log.debug("{0} - Got message from Slack RTM: {1}".format(self.name, msg))
@@ -97,7 +97,7 @@ class SlackListener(Listener):
                                 if "channel_list" in self.config:
                                     if channel not in self.config["channel_list"]:
                                         _log.debug("{0} - Channel '{1}' is not listened to".format(self.name, channel))
-                                        pass
+                                        continue
                             elif event["channel"].startswith("D"):
                                 channel = "Direct Message"
                             #Get time
