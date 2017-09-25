@@ -37,11 +37,13 @@ class App():
         for l in listeners:
             try:
                 listener = self.generateListener(l)
+                if listener is None:
+                    continue
                 listener.start()
                 self.listeners.append(listener)
             except Exception as err:
                 _log.error("Could not start listener '{0}': {1}".format(l, err))
-                pass
+                continue
 
     def generateListener(self, config):
         listenType = ListenerType[config['type'].upper()]
@@ -55,7 +57,7 @@ class App():
         elif (listenType == ListenerType.MOCK):
             listener = MockListener(config)
         else:
-            pass
+            return None
         listener.on_message_received(self.relay)
         listener.on_stop(self.listener_closed)
         return listener
@@ -64,14 +66,9 @@ class App():
     def startEmitters(self, emitters):
         for e in emitters:
             try:
-                emitter = None
-                emitterType = EmitterType[e['type'].upper()]
-                if(emitterType == EmitterType.CLI):
-                    emitter = CliEmitter(e)
-                elif(emitterType == EmitterType.DISCORD):
-                    emitter = DiscordEmitter(e)
-                else:
-                    pass
+                emitter = generateEmitter(e)
+                if emitter is None:
+                    continue
                 emitter.start()
                 self.emitters.append(emitter)
             except Exception as err:
@@ -80,15 +77,53 @@ class App():
                 else:
                     e_name = "Unknown"
                 _log.error("Could not start emitter'{0}': {1}".format(e_name, err))
-                pass
+                continue
+
+    def generateEmitter(self, config):
+        emitter = None
+        emitterType = EmitterType[config['type'].upper()]
+        if(emitterType == EmitterType.CLI):
+            emitter = CliEmitter(config)
+        elif(emitterType == EmitterType.DISCORD):
+            emitter = DiscordEmitter(config)
+        return emitter
 
     def relay(self, msg):
         for e in self.emitters:
             e.emit(msg)
 
     def listener_closed(self, listener):
-        _log.error("A listener was closed")
+        _log.error("A listener was closed - {0}".format(listener.name))
 
+        if not listener.autoreconnect:
+            return
+
+        time.delay(10)
+        _log.info("Attempting to reconnect - {0}".format(emitter.name))
+
+        #Grab the config and delete the old listener
+        config = listener.config
+        for i, l in enumerate(self.listeners):
+            if l == listener:
+                del self.listeners[i]
+                break
+
+        #Start a new listener in its place
+        try:
+            listener = self.generateListener(config)
+            listener.start()
+            self.listeners.append(listener)
+        except Exception as err:
+            _log.error("Could not start listener '{0}': {1}".format(l, err))
+
+    def emitter_closed(self, emitter):
+        _log.error("A emitter was closed - {0}".format(emitter.name))
+
+        if not listener.autoreconnect:
+            return
+
+        time.delay(10)
+        _log.info("Attempting to reconnect - {0}".format(emitter.name))
         #Grab the config and delete the old listener
         config = listener.config
         for i, l in enumerate(self.listeners):
