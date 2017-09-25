@@ -10,6 +10,7 @@ password = ""
 host = ""
 port = 5222
 channel_list = ["A", "B", "C"]
+pm_list = ["D"]
 
 
 [[listeners]]
@@ -17,6 +18,7 @@ type = "slack"
 name = "example slack"
 token = ""
 channel_list = ["A", "B", "C"]
+pm_list = ["D"]
 
 #Note: You only need one discord entry per login, each login will capter the specified servers
 [[listeners]]
@@ -24,4 +26,6 @@ type = "discord"
 name = "example discord"
 email = ""
 password = ""
-channel_list = ["11111111111111", "22222222222222222", "3333333333333333"] #Note that discord uses channel ID, not name
+#Note that discord uses channel/user ID, not names for these:
+channel_list = ["11111111111111", "22222222222222222", "3333333333333333"]
+pm_list = ["444444444444444444444"]

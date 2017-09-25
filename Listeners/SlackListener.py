@@ -24,6 +24,16 @@ class SlackListener(Listener):
         self.name = config["name"]
         self.token = config["token"]
 
+        if "pm_list" in config:
+            self.pm_list = config["pm_list"]
+        else:
+            self.pm_list = []
+
+        if "channel_list" in config:
+            self.channel_list = config["channel_list"]
+        else:
+            self.channel_list = []
+
         _log.info("{0} - Initializing Slack client".format(self.name))
         self.client = SlackClient(self.token)
         try:
@@ -94,12 +104,15 @@ class SlackListener(Listener):
                                     _log.warn("{0} - Could not get channel info {1}".format(self.name, err))
                                     channel = "Unknown ({0})".format(event["channel"])
                                 #Channel filter
-                                if "channel_list" in self.config:
-                                    if channel not in self.config["channel_list"]:
-                                        _log.debug("{0} - Channel '{1}' is not listened to".format(self.name, channel))
-                                        continue
+                                if channel not in self.channel_list:
+                                    _log.debug("{0} - Channel '{1}' is not listened to".format(self.name, channel))
+                                    continue
                             elif event["channel"].startswith("D"):
                                 channel = "Direct Message"
+                                #PM Filter
+                                if user not in self.pm_list:
+                                    _log.debug("{0} - User '{1}' is not listened to".format(self.name, user))
+                                    continue
                             #Get time
                             timestamp = float(event["ts"])
                             msgTime = datetime.fromtimestamp(timestamp)

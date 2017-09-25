@@ -47,7 +47,7 @@ class DiscordEmitter(Emitter):
         _log.debug("{0} - Sending message to {1} channels".format(self.name, str(len(channels))))
         #Replace @here and @everyone
         regex = r"@(everyone|here)"
-        subst = "`@$1`"
+        subst = r"`@\1`"
         message.message = re.sub(regex, subst, message.message)
         for channel in channels:
             try:
@@ -58,6 +58,8 @@ class DiscordEmitter(Emitter):
 
     def get_channels(self, message):
         default_channel_id = self.channel
+        channel_list = []
+
         if "channels" in self.config:
             for ch in self.config["channels"]:
                 if message.server in ch["from_server_list"]:

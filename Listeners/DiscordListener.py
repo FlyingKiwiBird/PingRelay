@@ -24,6 +24,17 @@ class DiscordListener(Listener):
         self.email = config["email"]
         self.password = config["password"]
         self.name = config["name"]
+
+        if "pm_list" in config:
+            self.pm_list = config["pm_list"]
+        else:
+            self.pm_list = []
+
+        if "channel_list" in self.config:
+            self.channel_list = config["channel_list"]
+        else:
+            self.channel_list = []
+
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
         self.client = discord.Client(loop=self.loop)
@@ -37,7 +48,7 @@ class DiscordListener(Listener):
         super(DiscordListener, self).finished()
 
     def stop(self):
-        _log.info("Stopping Discord")
+        _log.info("{0} - Stopping Discord".format(self.name))
         asyncio.run_coroutine_threadsafe(self.client.logout(), self.loop)
 
     async def runDiscord(self):
@@ -64,15 +75,18 @@ class DiscordListener(Listener):
         if message.channel.is_private:
             channel = "Direct Message"
             server = "Discord"
+            #PM filter
+            if message.author.id not in self.pm_list:
+                _log.debug("{0} - User '{1} ({2})' is not listened to".format(self.name, message.author.display_name, message.author.id))
+                return
         else:
             channel = message.channel.name
             server = str(message.channel.server)
             channel_id = message.channel.id
             #Channel filter
-            if "channel_list" in self.config:
-                if channel_id not in self.config["channel_list"]:
-                    _log.debug("{0} - Channel '{1} ({2})' on '{3}' is not listened to".format(self.name, channel, channel_id, server))
-                    return
+            if channel_id not in self.channel_list:
+                _log.debug("{0} - Channel '{1} ({2})' on '{3}' is not listened to".format(self.name, channel, channel_id, server))
+                return
 
         #replace usernames
         text = self.get_names_from_mentions(message)

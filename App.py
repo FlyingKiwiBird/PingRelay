@@ -1,6 +1,7 @@
 from Listeners.JabberListener import JabberListener
 from Listeners.SlackListener import SlackListener
 from Listeners.DiscordListener import DiscordListener
+from Listeners.MockListener import MockListener
 from Listeners.ListenerType import ListenerType
 
 from Emitters.EmitterType import EmitterType
@@ -51,6 +52,8 @@ class App():
             listener = SlackListener(config)
         elif(listenType == ListenerType.DISCORD):
             listener = DiscordListener(config)
+        elif (listenType == ListenerType.MOCK):
+            listener = MockListener(config)
         else:
             pass
         listener.on_message_received(self.relay)

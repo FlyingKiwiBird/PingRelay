@@ -26,6 +26,11 @@ class JabberListener(Listener):
         jid_parts = self.jid.split("@")
         self.nick = jid_parts[0]
 
+        if "pm_list" in config:
+            self.pm_list = config["pm_list"]
+        else:
+            self.pm_list = []
+
         _log.info("{0} - Initializing Jabber client for: {1}".format(self.name, self.jid))
         self.client =  ClientXMPP(self.jid, self.password)
         self.client.add_event_handler("session_start", self.onConnect)
@@ -53,6 +58,8 @@ class JabberListener(Listener):
         self.joinRooms()
 
     def joinRooms(self):
+        if "channel_list" not in self.config:
+            return
         rooms = self.config["channel_list"]
         for r in rooms:
             room_addr = "{0}@{1}".format(r, self.host)
@@ -75,6 +82,9 @@ class JabberListener(Listener):
             msgChannel = "Direct Message"
             msgFromParts = msg["from"].bare.split("@")
             msgFrom = msgFromParts[0]
+            #PM filter
+            if msgFrom not in self.pm_list:
+                 return
         elif msg["type"] == "groupchat":
             msgChannelParts = msg["mucroom"].split("@")
             msgChannel = msgChannelParts[0]
