@@ -3,6 +3,7 @@ from .EmitterType import EmitterType
 
 import asyncio
 import discord
+import re
 
 import logging
 _log = logging.getLogger("PingRelay")
@@ -44,6 +45,10 @@ class DiscordEmitter(Emitter):
         _log.debug("{0} - Got message to emit".format(self.name))
         channels = self.get_channels(message)
         _log.debug("{0} - Sending message to {1} channels".format(self.name, str(len(channels))))
+        #Replace @here and @everyone
+        regex = r"@(everyone|here)"
+        subst = "`@$1`"
+        message.message = re.sub(regex, subst, message.message)
         for channel in channels:
             try:
                 await self.client.send_message(channel, content=message)
