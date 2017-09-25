@@ -119,22 +119,22 @@ class App():
     def emitter_closed(self, emitter):
         _log.error("A emitter was closed - {0}".format(emitter.name))
 
-        if not listener.autoreconnect:
+        if not emitter.autoreconnect:
             return
 
         time.delay(10)
         _log.info("Attempting to reconnect - {0}".format(emitter.name))
         #Grab the config and delete the old listener
-        config = listener.config
-        for i, l in enumerate(self.listeners):
-            if l == listener:
-                del self.listeners[i]
+        config = emitter.config
+        for i, e in enumerate(self.emitter):
+            if e == emitter:
+                del self.emitter[i]
                 break
 
         #Start a new listener in its place
         try:
-            listener = self.generateListener(config)
-            listener.start()
-            self.listeners.append(listener)
+            emitter = self.generateListener(config)
+            emitter.start()
+            self.listeners.append(emitter)
         except Exception as err:
             _log.error("Could not start listener '{0}': {1}".format(l, err))
