@@ -16,6 +16,7 @@ class MockListener(Listener):
         self.running = False
         self.name = config["name"]
         self.intv = config["interval"]
+        self.enabled = config["enabled"]
 
         self.message = config["message"]
         self.server = config["server"]
@@ -24,7 +25,7 @@ class MockListener(Listener):
         _log.debug("{0} - Setup mock listener".format(self.name))
 
     def run(self):
-        self.running = True
+        self.running = self.enabled
         _log.debug("{0} - Mocking started".format(self.name))
         self.loop()
 
