@@ -22,3 +22,4 @@ class MessageFormatter():
             return self.message.message
         if(placeholder == "time"):
             return self.message.time.strftime(self.time_format)
+        return match.group()
