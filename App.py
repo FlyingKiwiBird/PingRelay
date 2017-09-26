@@ -71,7 +71,7 @@ class App():
     def startEmitters(self, emitters):
         for e in emitters:
             try:
-                emitter = generateEmitter(e)
+                emitter = self.generateEmitter(e)
                 if emitter is None:
                     continue
                 emitter.start()
