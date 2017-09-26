@@ -1,5 +1,6 @@
 from .BaseEmitter import Emitter
 from .EmitterType import EmitterType
+from Resources.MessageFormatter import MessageFormatter
 
 import asyncio
 import discord
@@ -20,6 +21,12 @@ class DiscordEmitter(Emitter):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
         self.client = discord.Client(loop=self.loop)
+        if "format" in config:
+            if "time_format" in config:
+                self.formatter = MessageFormatter(config["format"], config["time_format"])
+            else:
+                self.formatter = MessageFormatter(config["format"])
+
         _log.info("{0} - Initializing Discord client".format(self.name))
 
     def stop(self):
@@ -49,6 +56,9 @@ class DiscordEmitter(Emitter):
         regex = r"@(everyone|here)"
         subst = r"`@\1`"
         message.message = re.sub(regex, subst, message.message)
+        #formatter
+        if self.formatter:
+            message = self.formatter.format(message)
         for channel in channels:
             try:
                 await self.client.send_message(channel, content=message)

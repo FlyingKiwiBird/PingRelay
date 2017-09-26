@@ -118,7 +118,8 @@ class SlackListener(Listener):
                             msgTime = datetime.fromtimestamp(timestamp)
 
                             #Username replacement
-                            msg = re.sub(r"<@([\w\d]+)>", self.replace_user_id_with_name, msg)
+                            regex = re.compile(r"<@([\w\d]+)>")
+                            msg = regex.sub(self.replace_user_id_with_name, msg)
 
                             message = Message(self, msg, user, channel, self.server, msgTime)
                             self.messageHandler(message)

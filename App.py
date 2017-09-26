@@ -33,6 +33,11 @@ class App():
         if 'listeners' in self.config:
             self.startListeners(self.config['listeners'])
 
+    #This little guy makes the whole thing tick
+    def relay(self, msg):
+        for e in self.emitters:
+            e.emit(msg)
+
     def startListeners(self, listeners):
         for l in listeners:
             try:
@@ -87,10 +92,6 @@ class App():
         elif(emitterType == EmitterType.DISCORD):
             emitter = DiscordEmitter(config)
         return emitter
-
-    def relay(self, msg):
-        for e in self.emitters:
-            e.emit(msg)
 
     def listener_closed(self, listener):
         _log.error("A listener was closed - {0}".format(listener.name))
