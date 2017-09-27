@@ -57,8 +57,8 @@ class DiscordEmitter(Emitter):
         subst = r"`@\1`"
         message.message = re.sub(regex, subst, message.message)
         #formatter
-        if self.formatter:
-            message = self.formatter.format(message)
+        if self.formatter is not None:
+            message = self.formatter.format_message(message)
         for channel in channels:
             try:
                 await self.client.send_message(channel, content=message)

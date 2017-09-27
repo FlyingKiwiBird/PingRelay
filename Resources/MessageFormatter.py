@@ -1,14 +1,19 @@
 import re
 
+import logging
+_log = logging.getLogger("PingRelay")
+
 class MessageFormatter():
-    def __init__(self, format, time_format = "%Y-%m-%d %I:%M:%S %p"):
-        self.format = format
+    def __init__(self, message_format, time_format = "%Y-%m-%d %I:%M:%S %p"):
+        self.format = message_format
         self.time_format = time_format
 
-    def format(self, message):
+    def format_message(self, message):
         regex = re.compile(r"%{(\w+)}")
         self.message = message
-        return regex.sub(fill_placeholder, self.format)
+        result = regex.sub(self.fill_placeholder, self.format)
+        _log.debug("Formatted with {0} resulted in {1}".format(self.format, result))
+        return result
 
     def fill_placeholder(self, match):
         placeholder = match.group(1).lower()
