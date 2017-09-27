@@ -30,6 +30,7 @@ class App():
         self.alerts = []
         if "alerts" in config:
             self.alerts = config["alerts"]
+            _log.debug("Got alerts config: {0}".format(self.alerts))
 
     def run(self):
 
@@ -51,10 +52,12 @@ class App():
             e.emit(msg)
 
     def check_alerts(self, message):
+        _log.debug("Checking message for alerts: '{0}'".format(message.message))
         for alert in self.alerts:
             alert_re = re.compile(alert["filter"])
-            if alert_re.search(message.message):
-                message.add_alert(alert.name)
+            if alert_re.search(message.message) is not None:
+                _log.debug("Matched alert {0}".format(alert["name"]))
+                message.add_alert(alert["name"])
 
 ############### Initializers
 

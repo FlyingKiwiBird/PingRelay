@@ -12,6 +12,8 @@ _log = logging.getLogger("PingRelay")
 class DiscordEmitter(Emitter):
 
     emitterType = EmitterType.DISCORD
+    formatter = None
+    alert_channel = None
 
     def __init__(self, config, alertOnly):
         super(DiscordEmitter, self).__init__(config, alertOnly)
