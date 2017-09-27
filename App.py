@@ -109,9 +109,9 @@ class App():
         emitter = None
         emitterType = EmitterType[config['type'].upper()]
         if(emitterType == EmitterType.CLI):
-            emitter = CliEmitter(config, self.alertOnly)
+            emitter = CliEmitter(config, self.alertsOnly)
         elif(emitterType == EmitterType.DISCORD):
-            emitter = DiscordEmitter(config, self.alertOnly)
+            emitter = DiscordEmitter(config, self.alertsOnly)
         return emitter
 
 ##########  Handle closes
