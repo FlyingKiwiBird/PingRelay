@@ -14,6 +14,7 @@ from datetime import datetime
 import os
 import logging
 import time
+import re
 
 _log = logging.getLogger("PingRelay")
 
@@ -21,27 +22,46 @@ class App():
 
     def __init__(self, config):
         self.config = config
+        if "only_relay_alerts" in config:
+            self.alertsOnly = config["only_relay_alerts"]
+        else:
+            self.alertsOnly = False
 
+        self.alerts = []
+        if "alerts" in config:
+            self.alerts = config["alerts"]
 
     def run(self):
 
         self.emitters = []
         if 'emitters' in self.config:
-            self.startEmitters(self.config['emitters'])
+            self.start_emitters(self.config['emitters'])
 
         self.listeners = []
         if 'listeners' in self.config:
-            self.startListeners(self.config['listeners'])
+            self.start_listeners(self.config['listeners'])
 
     #This little guy makes the whole thing tick
     def relay(self, msg):
+        self.check_alerts(msg)
+        if self.alertsOnly:
+            if not msg.has_alert:
+                return
         for e in self.emitters:
             e.emit(msg)
 
-    def startListeners(self, listeners):
+    def check_alerts(self, message):
+        for alert in self.alerts:
+            alert_re = re.compile(alert["filter"])
+            if alert_re.search(message.message):
+                message.add_alert(alert.name)
+
+############### Initializers
+
+    def start_listeners(self, listeners):
         for l in listeners:
             try:
-                listener = self.generateListener(l)
+                listener = self.generate_listener(l)
                 if listener is None:
                     continue
                 listener.start()
@@ -50,7 +70,25 @@ class App():
                 _log.error("Could not start listener '{0}': {1}".format(l, err))
                 continue
 
-    def generateListener(self, config):
+    def start_emitters(self, emitters):
+        for e in emitters:
+            try:
+                emitter = self.generate_emitter(e)
+                if emitter is None:
+                    continue
+                emitter.start()
+                self.emitters.append(emitter)
+            except Exception as err:
+                if "name" in e:
+                    e_name = e['name']
+                else:
+                    e_name = "Unknown"
+                _log.error("Could not start emitter'{0}': {1}".format(e_name, err))
+                continue
+
+########## Generators
+
+    def generate_listener(self, config):
         listenType = ListenerType[config['type'].upper()]
         listener = None
         if(listenType == ListenerType.JABBER):
@@ -67,31 +105,16 @@ class App():
         listener.on_stop(self.listener_closed)
         return listener
 
-
-    def startEmitters(self, emitters):
-        for e in emitters:
-            try:
-                emitter = self.generateEmitter(e)
-                if emitter is None:
-                    continue
-                emitter.start()
-                self.emitters.append(emitter)
-            except Exception as err:
-                if "name" in e:
-                    e_name = e['name']
-                else:
-                    e_name = "Unknown"
-                _log.error("Could not start emitter'{0}': {1}".format(e_name, err))
-                continue
-
-    def generateEmitter(self, config):
+    def generate_emitter(self, config):
         emitter = None
         emitterType = EmitterType[config['type'].upper()]
         if(emitterType == EmitterType.CLI):
-            emitter = CliEmitter(config)
+            emitter = CliEmitter(config, self.alertOnly)
         elif(emitterType == EmitterType.DISCORD):
-            emitter = DiscordEmitter(config)
+            emitter = DiscordEmitter(config, self.alertOnly)
         return emitter
+
+##########  Handle closes
 
     def listener_closed(self, listener):
         _log.error("A listener was closed - {0}".format(listener.name))
@@ -111,7 +134,7 @@ class App():
 
         #Start a new listener in its place
         try:
-            listener = self.generateListener(config)
+            listener = self.generate_listener(config)
             listener.start()
             self.listeners.append(listener)
         except Exception as err:
@@ -125,7 +148,7 @@ class App():
 
         time.delay(10)
         _log.info("Attempting to reconnect - {0}".format(emitter.name))
-        #Grab the config and delete the old listener
+        #Grab the config and delete the old emitter
         config = emitter.config
         for i, e in enumerate(self.emitter):
             if e == emitter:
@@ -134,7 +157,7 @@ class App():
 
         #Start a new listener in its place
         try:
-            emitter = self.generateListener(config)
+            emitter = self.generate_emitter(config)
             emitter.start()
             self.listeners.append(emitter)
         except Exception as err:

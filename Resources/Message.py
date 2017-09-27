@@ -20,3 +20,6 @@ class Message:
     def add_alert(self, alert):
         self.has_alert = True
         self.alerts.append(alert)
+
+    def get_alert_str(self):
+        return ", ".join(self.alerts)

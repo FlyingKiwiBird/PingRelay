@@ -10,8 +10,8 @@ class CliEmitter(Emitter):
 
     emitterType = EmitterType.CLI
 
-    def __init__(self, config):
-        super(CliEmitter, self).__init__(config)
+    def __init__(self, config, alertOnly):
+        super(CliEmitter, self).__init__(config, alertOnly)
         self.online = True
         _log.debug("CLI emitter started")
 
