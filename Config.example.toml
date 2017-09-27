@@ -1,6 +1,10 @@
 #Rename to Config.toml
-
 log_level = "DEBUG"
+only_relay_alerts=false
+
+[[alerts]]
+name = "example alert"
+filter = "reg(ular )?ex(pressions)?"
 
 [[listeners]]
 type = "jabber"
@@ -16,11 +20,11 @@ pm_list = ["D"]
 [[listeners]]
 type = "slack"
 name = "example slack"
-token = ""
+token = "legacy token"
 channel_list = ["A", "B", "C"]
 pm_list = ["D"]
 
-#Note: You only need one discord entry per login, each login will capter the specified servers
+#Note: You only need one discord entry per login, each login can capture from any of the servers it has access to
 [[listeners]]
 type = "discord"
 name = "example discord"
@@ -29,3 +33,15 @@ password = ""
 #Note that discord uses channel/user ID, not names for these:
 channel_list = ["11111111111111", "22222222222222222", "3333333333333333"]
 pm_list = ["444444444444444444444"]
+
+[[emitters]]
+type = "discord"
+name = "CIA"
+token = "bot token"
+default_channel = "555555555555555555555"
+alert_channel = "666666666666666666"
+format = "**[%{server} -- %{channel} -- %{from}]**\n%{message}"
+
+  [[emitters.channels]]
+  from_server_list = ["some server"]
+  to_channel_list = ["77777777777777", "8888888888888"]
