@@ -27,14 +27,17 @@ This file must be called `Config.toml`
 ### General
 
 **log_level**
+
 Sets the logging level of the main application, can be DEBUG, INFO, WARNING, or ERROR
 Defaults to INFO
 
 **module_log_level**
+
 Sets the logging level of 3rd party modules, can be: DEBUG, INFO, WARNING, or ERROR
 Defaults to WARNING
 
 **only_relay_alerts**
+
 Only send messages that match alerts (more on those later)
 Defaults to False
 
@@ -43,10 +46,12 @@ Alerts are a way to highlight important messages
 As show in the example these are under a heading of `[[alerts]]`
 
 **name**
+
 The name of the alert
 Required
 
 **filter**
+
 A regular expression which is run against the message body.  If there is a match it sends the alert.
 Required
 
@@ -55,40 +60,49 @@ Listeners, well listen.  These monitor services for new messages and pass them a
 As show in the example these are under a heading of `[[listeners]]`
 
 **type**
+
 The type of the listener can be: Jabber, Slack, or Discord
 Required
 
 **name**
+
 The name of the listener - not used much except for in the logs to identify issues
 Required
 
 **channel_list**
+
 A list of channel names to monitor (Note: for discord use channel ID instead)
 
 **pm_list**
+
 A list of users to listen to private/direct messages from (Note: for discord use user ID instead)
 
 #### Jabber Specific
 
 **jid**
+
 Jabber full username (this will have @ then a url at the end, like an email)
 Required
 
 **password**
+
 Jabber password
 Required
 
 **host**
+
 The URL to the "conference" server
 Required
 
 **port**
+
 The port Jabber is running on, probably 5222
 Required
 
 #### Slack Specific
 
 **token**
+
 A legacy token for the user, should start with "xoxp"
 Required
 
@@ -96,10 +110,12 @@ Required
 Discord uses IDs rather than names for channel_list and pm_list, change your client to "Dev Mode" and you can right click to copy these IDs
 
 **email**
+
 User's email
 Required
 
 **password**
+
 User's password
 Required
 
@@ -108,25 +124,30 @@ Emitters send the messages acquired by the listeners to the correct place
 As show in the example these are under a heading of `[[emitters]]`
 
 **type**
+
 The type of the emitter can be: Discord (more soon)
 Required
 
 **name**
+
 The name of the emitter - not used much except for in the logs to identify issues
 Required
 
 **default_channel**
+
 The default channel (name) to send the messages to
 Note: Discord uses channel ID instead
 Required
 
 **alert_channel**
+
 If specified all messages with alerts will be directed to the channel with this name instead
 Note: Discord uses channel ID instead
 
 #### Formatting
 
 **format**
+
 The format a message is displayed in
 The following placeholders can be used:
 
@@ -137,6 +158,7 @@ The following placeholders can be used:
 * `%{message}` - The body of the message
 
 **time_format**
+
 The format which the `%{time}` placeholder is displayed as
 See [strftime.org](http://strftime.org/) for the format
 Defaults to `%Y-%m-%d %I:%M:%S %p` (e.g. `2017-09-26 10:11:12 PM`)
@@ -146,6 +168,7 @@ This is a way to direct messages that come from a server on the listener side to
 As show in the example these are under a heading of `[[emitters.channels]]`
 
 **from_server_list**
+
 A list of server names that the message is coming from
 Note: The server name is determined depending on the listener type:
 * Jabber = host
@@ -153,6 +176,7 @@ Note: The server name is determined depending on the listener type:
 Required
 
 **to_channel_list**
+
 A list of channel names to broadcast the message to if it matches the from_server_list
 Note: Discord uses channel ID instead
 Required
@@ -160,6 +184,7 @@ Required
 #### Discord Specific
 
 **token**
+
 A token for the discord bot being used to send the messages
 
 ## Running
