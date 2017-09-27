@@ -194,3 +194,4 @@ If not running via supervisor method simply run with:
 # Future / To Do
 
 * Web interface for managing listeners/emitters
+* More Emitters
