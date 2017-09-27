@@ -190,3 +190,7 @@ A token for the discord bot being used to send the messages
 ## Running
 If not running via supervisor method simply run with:
 `python PingRelay.py`
+
+# Future / To Do
+
+* Web interface for managing listeners/emitters
