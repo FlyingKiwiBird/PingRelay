@@ -13,13 +13,16 @@ class ControlServer(threading.Thread):
         threading.Thread.__init__(self)
         self.running = False
         self.app = application
-
+        if "web_server_port" in config:
+            self.port = config["web_server_port"]
+        else:
+            self.port = 8080
 
     def run(self):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
         try:
-            self.sever_runner = websockets.serve(self.server, 'localhost', 8765)
+            self.sever_runner = websockets.serve(self.server, 'localhost', self.port)
             self.loop.run_until_complete(self.sever_runner)
             self.running = True
         except Exception as err:
@@ -49,7 +52,7 @@ class ControlServer(threading.Thread):
                 self.send(websocket, {"error":"action not specified"})
                 pass
             action = message["action"]
-            if (action == "get listeners"):
+            if (action == "get status"):
                 await self.action_get_listeners(websocket, message)
             elif (action == "disconnect"):
                 await self.action_disconnect(websocket, message)
@@ -62,7 +65,7 @@ class ControlServer(threading.Thread):
         except Exception as err:
             _log.debug("A connection was closed: {0}".format(err))
 
-    async def action_get_listeners(self, websocket, message):
+    async def action_get_status(self, websocket, message):
         listener_details = []
         for listener in self.app.listeners:
             listener_info = {}
@@ -71,7 +74,15 @@ class ControlServer(threading.Thread):
             listener_info["uptime"] = str(listener.uptime())
             listener_details.append(listener_info)
 
-        response = {"Status": "OK", "Listeners": listener_details}
+        emitter_details = []
+        for emitter in self.app.emitters:
+            emitter_info = {}
+            emitter_info["name"] = emitter.name
+            emitter_info["status"] = str(emitter.status())
+            emitter_info["uptime"] = str(emitter.uptime())
+            emitter_details.append(emitter_info)
+
+        response = {"Status": "OK", "Listeners": listener_details, "Emitters": emitter_details}
         await self.send(websocket, response)
 
     async def action_disconnect(self, websocket, message):
