@@ -125,7 +125,7 @@ class App():
         if not listener.autoreconnect:
             return
 
-        time.delay(10)
+        time.sleep(10)
         _log.info("Attempting to reconnect - {0}".format(emitter.name))
 
         #Grab the config and delete the old listener
@@ -149,7 +149,7 @@ class App():
         if not emitter.autoreconnect:
             return
 
-        time.delay(10)
+        time.sleep(10)
         _log.info("Attempting to reconnect - {0}".format(emitter.name))
         #Grab the config and delete the old emitter
         config = emitter.config
