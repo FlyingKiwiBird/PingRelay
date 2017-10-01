@@ -53,7 +53,7 @@ class ControlServer(threading.Thread):
                 pass
             action = message["action"]
             if (action == "get status"):
-                await self.action_get_listeners(websocket, message)
+                await self.action_get_status(websocket, message)
             elif (action == "disconnect"):
                 await self.action_disconnect(websocket, message)
 
@@ -82,7 +82,7 @@ class ControlServer(threading.Thread):
             emitter_info["uptime"] = str(emitter.uptime())
             emitter_details.append(emitter_info)
 
-        response = {"Status": "OK", "Listeners": listener_details, "Emitters": emitter_details}
+        response = {"Status": "OK", "Response": "Status", "Listeners": listener_details, "Emitters": emitter_details}
         await self.send(websocket, response)
 
     async def action_disconnect(self, websocket, message):

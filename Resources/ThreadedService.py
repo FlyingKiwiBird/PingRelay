@@ -54,4 +54,4 @@ class ThreadedService(threading.Thread):
 class ThreadStatus(Enum):
     Ready = "Ready"
     Running = "Running"
-    Complete = "Complete"
+    Complete = "Disconnected"

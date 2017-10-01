@@ -5,7 +5,7 @@
     </head>
     <body>
         <script>
-            var ws = new WebSocket("ws://127.0.0.1:8765/"),
+            var ws = new WebSocket("ws://127.0.0.1:8080/"),
                 messages = document.createElement('ul');
                 ws.onopen = function (event) {
                   var message = {"action":"get status"}
