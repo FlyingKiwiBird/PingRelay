@@ -47,9 +47,9 @@ class ControlServer(threading.Thread):
             try:
                 message = json.loads(message_json)
             except Exception as err:
-                self.send(websocket, {"error":"not in json format"})
+                self.send(websocket, {"Status": "Error", "error":"not in json format"})
             if "action" not in message:
-                self.send(websocket, {"error":"action not specified"})
+                self.send(websocket, {"Status": "Error", "error":"action not specified"})
                 pass
             action = message["action"]
             if (action == "get status"):
@@ -68,26 +68,35 @@ class ControlServer(threading.Thread):
     async def action_get_status(self, websocket, message):
         listener_details = []
         for listener in self.app.listeners:
-            listener_info = {}
-            listener_info["name"] = listener.name
-            listener_info["status"] = str(listener.status())
-            listener_info["uptime"] = str(listener.uptime())
+            listener_info = self.get_details(listener)
             listener_details.append(listener_info)
 
         emitter_details = []
         for emitter in self.app.emitters:
-            emitter_info = {}
-            emitter_info["name"] = emitter.name
-            emitter_info["status"] = str(emitter.status())
-            emitter_info["uptime"] = str(emitter.uptime())
+            emitter_info = self.get_details(emitter)
             emitter_details.append(emitter_info)
 
         response = {"Status": "OK", "Response": "Status", "Listeners": listener_details, "Emitters": emitter_details}
         await self.send(websocket, response)
 
     async def action_disconnect(self, websocket, message):
-        if not all(key in message for key in ["type", "name"]):
-            await self.send(websocket, {"error":"action not specified"})
+        if "id" not in message:
+            await self.send(websocket, {"Status": "Error", "error":"id not specified"})
             return
-        connection_type = message["type"]
-        connection_name = message["name"]
+        connection_id = int(message["id"])
+        connections = self.app.emitters + self.app.listeners
+        match = next((x for x in connections if x.id == connection_id), None)
+        if match is None:
+            await self.send(websocket, {"Status": "Error", "error":"connection not found"})
+            return
+        match.stop()
+        details = self.get_details(match)
+        await self.send(websocket, {"Status": "OK", "connection":details})
+
+    def get_details(self, connection):
+        connection_info = {}
+        connection_info["id"] = connection.id
+        connection_info["name"] = connection.name
+        connection_info["status"] = str(connection.status())
+        connection_info["uptime"] = str(connection.uptime())
+        return connection_info

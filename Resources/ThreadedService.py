@@ -4,51 +4,54 @@ from enum import Enum
 
 class ThreadedService(threading.Thread):
 
-        stop_handler = None
-        start_time = None
-        end_time = None
-        started = False
+    service_id = 1
 
-        def __init__(self):
-            threading.Thread.__init__(self)
+    def __init__(self):
+        self.stop_handler = None
+        self.start_time = None
+        self.end_time = None
+        self.started = False
+        self.id = ThreadedService.service_id
+        ThreadedService.service_id += 1
+        threading.Thread.__init__(self)
 
-        def start(self):
-            self.start_time = datetime.now()
-            self.started = True
-            self.autoreconnect = True
-            super(ThreadedService, self).start()
+    def start(self):
+        self.start_time = datetime.now()
+        self.started = True
+        self.autoreconnect = True
+        super(ThreadedService, self).start()
 
-        def run(self):
-            raise NotImplementedError()
+    def run(self):
+        raise NotImplementedError()
 
-        def stop(self):
-            self.finished()
-            raise NotImplementedError()
+    def stop(self):
+        self.finished()
+        raise NotImplementedError()
 
-        #Functions for statistics
-        def status(self):
-            if self.started == False:
-                return ThreadStatus.Ready.value
-            if self.is_alive():
-                return ThreadStatus.Running.value
-            return ThreadStatus.Complete.value
+    #Functions for statistics
+    def status(self):
+        if self.started == False:
+            return ThreadStatus.Ready.value
+        if self.is_alive():
+            return ThreadStatus.Running.value
+        return ThreadStatus.Complete.value
 
-        def uptime(self):
-            if self.start_time is None:
-                return None
-            if self.end_time is None:
-                return datetime.now() - self.start_time
+    def uptime(self):
+        if self.start_time is None:
+            return None
+        if self.end_time is None:
+            return datetime.now() - self.start_time
 
-            return self.end_time - self.start_time
+        return self.end_time - self.start_time
 
-        #Functions for callback on stopping
-        def on_stop(self, function):
-            self.stop_handler = function
+    #Functions for callback on stopping
+    def on_stop(self, function):
+        self.stop_handler = function
 
-        def finished(self):
-            self.end_time = datetime.now()
-            if self.stop_handler is not None:
-                self.stop_handler(self)
+    def finished(self):
+        self.end_time = datetime.now()
+        if self.stop_handler is not None:
+            self.stop_handler(self)
 
 
 class ThreadStatus(Enum):
