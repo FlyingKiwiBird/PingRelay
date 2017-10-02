@@ -126,6 +126,22 @@ class App():
             return
 
         time.sleep(10)
+        self.reconnect_listener(listener)
+
+
+    def emitter_closed(self, emitter):
+        _log.error("A emitter was closed - {0}".format(emitter.name))
+
+        if not emitter.autoreconnect:
+            return
+
+        time.sleep(10)
+        self.reconnect_emitter(emitter)
+
+
+################ Reconnect
+
+    def reconnect_listener(self, listener):
         _log.info("Attempting to reconnect - {0}".format(emitter.name))
 
         #Grab the config and delete the old listener
@@ -143,13 +159,8 @@ class App():
         except Exception as err:
             _log.error("Could not start listener '{0}': {1}".format(l, err))
 
-    def emitter_closed(self, emitter):
-        _log.error("A emitter was closed - {0}".format(emitter.name))
 
-        if not emitter.autoreconnect:
-            return
-
-        time.sleep(10)
+    def reconnect_emitter(self, emitter):
         _log.info("Attempting to reconnect - {0}".format(emitter.name))
         #Grab the config and delete the old emitter
         config = emitter.config

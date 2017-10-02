@@ -30,6 +30,7 @@ class MockListener(Listener):
         self.loop()
 
     def stop(self):
+        self.autoreconnect = False
         self.running = False
 
     def loop(self):

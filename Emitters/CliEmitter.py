@@ -24,8 +24,8 @@ class CliEmitter(Emitter):
                 del self.outbox [:]
             time.sleep(delay)
 
-
     def stop(self):
+        self.autoreconnect = False
         self.online = False
 
     def emit(self, message):

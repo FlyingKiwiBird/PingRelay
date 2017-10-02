@@ -7,6 +7,7 @@ class ThreadedService(threading.Thread):
     service_id = 1
 
     def __init__(self):
+        self.connectionType = None
         self.stop_handler = None
         self.start_time = None
         self.end_time = None

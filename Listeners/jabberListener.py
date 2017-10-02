@@ -50,6 +50,7 @@ class JabberListener(Listener):
 
     def stop(self):
         _log.info("Stopping Jabber")
+        self.autoreconnect = False
         self.client.disconnect(wait=True)
 
     def onConnect(self, event):

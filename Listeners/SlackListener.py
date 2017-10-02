@@ -57,6 +57,7 @@ class SlackListener(Listener):
 
     def stop(self):
         _log.info("Stopping slack")
+        self.autoreconnect = False
         self.running = False
 
     def replace_user_id_with_name(self, match):

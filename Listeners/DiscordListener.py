@@ -49,6 +49,7 @@ class DiscordListener(Listener):
 
     def stop(self):
         _log.info("{0} - Stopping Discord".format(self.name))
+        self.autoreconnect = False
         asyncio.run_coroutine_threadsafe(self.client.logout(), self.loop)
 
     async def runDiscord(self):

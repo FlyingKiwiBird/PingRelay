@@ -35,6 +35,7 @@ class DiscordEmitter(Emitter):
 
     def stop(self):
         _log.info("Stopping Discord")
+        self.autoreconnect = False
         asyncio.run_coroutine_threadsafe(self.client.logout(), self.loop)
 
     def run(self):
