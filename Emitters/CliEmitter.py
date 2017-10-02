@@ -23,6 +23,7 @@ class CliEmitter(Emitter):
                     print(message)
                 del self.outbox [:]
             time.sleep(delay)
+        super(CliEmitter, self).finished()
 
     def stop(self):
         self.autoreconnect = False

@@ -38,3 +38,4 @@ class MockListener(Listener):
             message = Message(self, self.message, self.sender, self.channel, self.server)
             self.messageHandler(message)
             time.sleep(self.intv)
+        super(MockListener, self).finished()
