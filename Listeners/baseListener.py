@@ -1,4 +1,5 @@
 from Resources.ThreadedService import ThreadedService
+from Resources.ServiceType import ServiceType
 
 class Listener(ThreadedService):
 
