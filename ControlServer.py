@@ -5,6 +5,9 @@ import asyncio
 import threading
 import json
 
+from Resources.ThreadedService import ThreadStatus
+from Resources.ServiceType import ServiceType
+
 import logging
 _log = logging.getLogger("PingRelay")
 
@@ -51,11 +54,15 @@ class ControlServer(threading.Thread):
             if "action" not in message:
                 self.send(websocket, {"Status": "Error", "error":"action not specified"})
                 pass
-            action = message["action"]
+            action = message["action"].lower()
             if (action == "get status"):
                 await self.action_get_status(websocket, message)
             elif (action == "disconnect"):
                 await self.action_disconnect(websocket, message)
+            elif (action == "reconnect"):
+                await self.action_reconnect(websocket, message)
+            else:
+                self.send(websocket, {"Status": "Error", "error":"action not valid"})
 
     async def send(self, websocket, response):
         reaponse_json = json.dumps(response)
@@ -93,10 +100,31 @@ class ControlServer(threading.Thread):
         details = self.get_details(match)
         await self.send(websocket, {"Status": "OK", "connection":details})
 
+    async def action_reconnect(self, websocket, message):
+        if "id" not in message:
+            await self.send(websocket, {"Status": "Error", "error":"id not specified"})
+            return
+        connection_id = int(message["id"])
+        connections = self.app.emitters + self.app.listeners
+        match = next((x for x in connections if x.id == connection_id), None)
+        if match is None:
+            await self.send(websocket, {"Status": "Error", "error":"connection not found"})
+            return
+        if match.status() == ThreadStatus.Running:
+            match.stop()
+        if match.connectionType == ServiceType.LISTENER:
+            self.app.reconnect_listener(match)
+        elif match.connectionType == ServiceType.EMITTER:
+            self.app.reconnect_emitter(match)
+
+        details = self.get_details(match)
+        await self.send(websocket, {"Status": "OK", "connection":details})
+
+
     def get_details(self, connection):
         connection_info = {}
         connection_info["id"] = connection.id
         connection_info["name"] = connection.name
-        connection_info["status"] = str(connection.status())
+        connection_info["status"] = str(connection.status().value)
         connection_info["uptime"] = str(connection.uptime())
         return connection_info
