@@ -98,7 +98,7 @@ class ControlServer(threading.Thread):
             return
         match.stop()
         details = self.get_details(match)
-        await self.send(websocket, {"Status": "OK", "connection":details})
+        await self.send(websocket, {"Status": "OK", "Response": "Disconnect", "connection":details})
 
     async def action_reconnect(self, websocket, message):
         if "id" not in message:
@@ -118,7 +118,7 @@ class ControlServer(threading.Thread):
             self.app.reconnect_emitter(match)
 
         details = self.get_details(match)
-        await self.send(websocket, {"Status": "OK", "connection":details})
+        await self.send(websocket, {"Status": "OK", "Response": "Reconnect",  "connection":details})
 
 
     def get_details(self, connection):
