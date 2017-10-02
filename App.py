@@ -173,6 +173,6 @@ class App():
         try:
             emitter = self.generate_emitter(config)
             emitter.start()
-            self.listeners.append(emitter)
+            self.emitters.append(emitter)
         except Exception as err:
             _log.error("Could not start listener '{0}': {1}".format(l, err))
