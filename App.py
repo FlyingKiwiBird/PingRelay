@@ -142,7 +142,7 @@ class App():
 ################ Reconnect
 
     def reconnect_listener(self, listener):
-        _log.info("Attempting to reconnect - {0}".format(emitter.name))
+        _log.info("Attempting to reconnect - {0}".format(listener.name))
 
         #Grab the config and delete the old listener
         config = listener.config
@@ -164,9 +164,9 @@ class App():
         _log.info("Attempting to reconnect - {0}".format(emitter.name))
         #Grab the config and delete the old emitter
         config = emitter.config
-        for i, e in enumerate(self.emitter):
+        for i, e in enumerate(self.emitters):
             if e == emitter:
-                del self.emitter[i]
+                del self.emitters[i]
                 break
 
         #Start a new listener in its place
