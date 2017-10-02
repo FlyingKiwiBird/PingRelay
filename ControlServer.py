@@ -83,7 +83,7 @@ class ControlServer(threading.Thread):
             emitter_info = self.get_details(emitter)
             emitter_details.append(emitter_info)
 
-        response = {"Status": "OK", "Response": "Status", "Listeners": listener_details, "Emitters": emitter_details}
+        response = {"Status": "OK", "Response": "Status", "Listeners": listener_details.sort(), "Emitters": emitter_details.sort()}
         await self.send(websocket, response)
 
     async def action_disconnect(self, websocket, message):
