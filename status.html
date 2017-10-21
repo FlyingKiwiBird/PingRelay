@@ -18,10 +18,11 @@
   <table id="listeners_table" class="table table-responsive">
     <thead>
       <tr>
-        <th class="w-25">Name</th>
-        <th class="w-25">Uptime</th>
-        <th class="w-25">Status</th>
-        <th class="w-25">Actions</th>
+        <th class="w-20">Name</th>
+        <th class="w-20">Uptime</th>
+        <th class="w-20">Status</th>
+        <th class="w-20">Messages</th>
+        <th class="w-20">Actions</th>
       </tr>
     </thead>
     <tbody id="listeners_list">
@@ -31,10 +32,11 @@
   <table id="emitters_table" class="table table-responsive">
     <thead>
       <tr>
-        <th class="w-25">Name</th>
-        <th class="w-25">Uptime</th>
-        <th class="w-25">Status</th>
-        <th class="w-25">Actions</th>
+        <th class="w-20">Name</th>
+        <th class="w-20">Uptime</th>
+        <th class="w-20">Status</th>
+        <th class="w-20">Messages</th>
+        <th class="w-20">Actions</th>
       </tr>
     </thead>
     <tbody id="emitters_list">
@@ -47,7 +49,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 
   <script>
-    var ws = new WebSocket("ws://127.0.0.1:8080/")
+    var ws = new WebSocket("ws://localhost:4000/")
 
     ws.onopen = function (event) {
       on_connect();
@@ -62,12 +64,12 @@
           $("#listeners_list").empty()
           var listeners = data.Listeners;
           $.each(listeners, function(i, listener){
-            $("#listeners_list").append("<tr class=\"" + status_to_class(listener.status) + "\"><td>" + listener.name + "</td><td>" + listener.uptime + "</td><td>" + listener.status + "</td><td>" + get_action_buttons(listener) + "</td></tr>");
+            $("#listeners_list").append("<tr class=\"" + status_to_class(listener.status) + "\"><td>" + listener.name + "</td><td>" + listener.uptime + "</td><td>" + listener.status + "</td><td>" + listener.messages + "</td><td>" + get_action_buttons(listener) + "</td></tr>");
           });
           $("#emitters_list").empty()
           var emitters = data.Emitters;
           $.each(emitters, function(i, emitter){
-            $("#emitters_list").append("<tr class=\"" + status_to_class(emitter.status) + "\"><td>" + emitter.name + "</td><td>" + emitter.uptime + "</td><td>" + emitter.status + "</td><td>" + get_action_buttons(emitter) + "</td></tr>");
+            $("#emitters_list").append("<tr class=\"" + status_to_class(emitter.status) + "\"><td>" + emitter.name + "</td><td>" + emitter.uptime + "</td><td>" + emitter.status + "</td><td>" + emitter.messages + "</td><td>" + get_action_buttons(emitter) + "</td></tr>");
           });
           $(".btn-disconnect").click(function(){
             var id = $(this).data("connection");
@@ -96,7 +98,7 @@
       send(message)
       var intervalID = window.setInterval(function(){
         send(message)
-      }, 1000);
+      }, 10000);
     }
 
     function send(message)

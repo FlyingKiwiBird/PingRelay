@@ -85,8 +85,8 @@ class ControlServer(threading.Thread):
 
         listener_details.sort(key=lambda x: x['name'])
         emitter_details.sort(key=lambda x: x['name'])
-
-        response = {"Status": "OK", "Response": "Status", "Listeners": listener_details, "Emitters": emitter_details}
+        relay_details = {"messages" : self.app.messages}
+        response = {"Status": "OK", "Response": "Status", "Listeners": listener_details, "Emitters": emitter_details, "Relay": relay_details}
         await self.send(websocket, response)
 
     async def action_disconnect(self, websocket, message):
@@ -130,4 +130,5 @@ class ControlServer(threading.Thread):
         connection_info["name"] = connection.name
         connection_info["status"] = str(connection.status().value)
         connection_info["uptime"] = str(connection.uptime())
+        connection_info["messages"] = connection.messages
         return connection_info

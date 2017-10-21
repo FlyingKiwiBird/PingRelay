@@ -53,7 +53,7 @@ class DiscordEmitter(Emitter):
     async def on_ready(self):
         _log.info("{0} - Connected to discord".format(self.name))
 
-    async def send_message(self, message):
+    async def send_message_async(self, message):
         _log.debug("{0} - Got message to emit".format(self.name))
         channels = self.get_channels(message)
         _log.debug("{0} - Sending message to {1} channels".format(self.name, str(len(channels))))
@@ -116,5 +116,5 @@ class DiscordEmitter(Emitter):
 
 
 
-    def emit(self, message):
-        asyncio.run_coroutine_threadsafe(self.send_message(message), self.loop)
+    def send_message(self, message):
+        asyncio.run_coroutine_threadsafe(self.send_message_async(message), self.loop)

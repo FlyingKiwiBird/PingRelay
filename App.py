@@ -21,6 +21,7 @@ _log = logging.getLogger("PingRelay")
 class App():
 
     def __init__(self, config):
+        self.messages = 0
         self.config = config
         if "only_relay_alerts" in config:
             self.alertsOnly = config["only_relay_alerts"]
@@ -48,6 +49,7 @@ class App():
         if self.alertsOnly:
             if not msg.has_alert:
                 return
+        self.messages += 1
         for e in self.emitters:
             e.emit(msg)
 

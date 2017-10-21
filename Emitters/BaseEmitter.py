@@ -9,11 +9,14 @@ class Emitter(ThreadedService):
         super(Emitter, self).__init__()
         self.config = config
         self.alertOnly = alertOnly
-        self.outbox = []
         self.emitType = None
         self.name = None
-        self.alertOnly = False
         self.connectionType = ServiceType.EMITTER
+        self.messages = 0
 
     def emit(self, message):
-        self.outbox.append(message)
+        self.messages += 1
+        self.send_message(message)
+
+    def send_message(self, message):
+        raise NotImplementedError()

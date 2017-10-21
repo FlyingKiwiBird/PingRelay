@@ -13,9 +13,16 @@ class Listener(ThreadedService):
         self.name = None
         self.messageHandler = None
         self.connectionType = ServiceType.LISTENER
+        self.messages = 0
 
     def on_message_received(self, messageHandler):
         self.messageHandler = messageHandler
+
+    def relay_message(self, message):
+        if self.messageHandler is not None:
+            self.messages += 1
+            self.messageHandler(message)
+
 
     def __str__(self):
         if self.name is not None:

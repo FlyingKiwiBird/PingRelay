@@ -36,6 +36,6 @@ class MockListener(Listener):
     def loop(self):
         while self.running:
             message = Message(self, self.message, self.sender, self.channel, self.server)
-            self.messageHandler(message)
+            self.relay_message(msg)
             time.sleep(self.intv)
         super(MockListener, self).finished()

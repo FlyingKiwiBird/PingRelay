@@ -29,6 +29,6 @@ class CliEmitter(Emitter):
         self.autoreconnect = False
         self.online = False
 
-    def emit(self, message):
+    def send_message(self, message):
         _log.debug("Got message: '{0}'".format(message))
         print(message)

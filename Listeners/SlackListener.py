@@ -123,7 +123,7 @@ class SlackListener(Listener):
                             msg = regex.sub(self.replace_user_id_with_name, msg)
 
                             message = Message(self, msg, user, channel, self.server, msgTime)
-                            self.messageHandler(message)
+                            self.relay_message(msg)
 
             else:
                 delay = min(++delay, 10)
