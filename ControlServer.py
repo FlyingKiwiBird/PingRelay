@@ -19,7 +19,7 @@ class ControlServer(threading.Thread):
         if "web_server_port" in config:
             self.port = config["web_server_port"]
         else:
-            self.port = 8080
+            self.port = 4000
 
     def run(self):
         self.loop = asyncio.new_event_loop()
@@ -85,7 +85,7 @@ class ControlServer(threading.Thread):
 
         listener_details.sort(key=lambda x: x['name'])
         emitter_details.sort(key=lambda x: x['name'])
-        
+
         response = {"Status": "OK", "Response": "Status", "Listeners": listener_details, "Emitters": emitter_details}
         await self.send(websocket, response)
 
