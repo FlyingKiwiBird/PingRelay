@@ -113,7 +113,7 @@ class JabberListener(Listener):
         message = Message(self, msgText, msgFrom, msgChannel, self.host)
         self.messageHandler(message)
 
-    def textFilter(text):
+    def textFilter(self, text):
         if not self.filter:
             return True
         for f in self.filter_list:
