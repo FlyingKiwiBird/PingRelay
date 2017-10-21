@@ -25,7 +25,7 @@ class ControlServer(threading.Thread):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
         try:
-            self.sever_runner = websockets.serve(self.server, 'localhost', self.port)
+            self.sever_runner = websockets.serve(self.server, '0.0.0.0', self.port)
             self.loop.run_until_complete(self.sever_runner)
             self.running = True
         except Exception as err:
