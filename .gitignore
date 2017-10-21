@@ -1,4 +1,5 @@
 Config.toml
+*.tar
 
 ############################################ Python general #######################
 # Byte-compiled / optimized / DLL files
