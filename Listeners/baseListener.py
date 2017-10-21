@@ -17,7 +17,7 @@ class Listener(ThreadedService):
     def on_message_received(self, messageHandler):
         self.messageHandler = messageHandler
 
-        def __str__(self):
-            if self.name is not None:
-                return self.name
-            return "Unknown"
+    def __str__(self):
+        if self.name is not None:
+            return self.name
+        return "Unknown"

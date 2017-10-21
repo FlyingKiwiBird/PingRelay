@@ -53,7 +53,11 @@ class App():
 
     def check_alerts(self, message):
         _log.debug("Checking message for alerts: '{0}'".format(message.message))
-        for alert in self.alerts:
+        if "alerts" in message.listener.config:
+            all_alerts = self.alerts + message.listener.config["alerts"]
+        else:
+            all_alerts = self.alerts
+        for alert in all_alerts:
             alert_re = re.compile(alert["filter"])
             if alert_re.search(message.message) is not None:
                 _log.debug("Matched alert {0}".format(alert["name"]))

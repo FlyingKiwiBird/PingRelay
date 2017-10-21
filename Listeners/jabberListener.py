@@ -28,8 +28,17 @@ class JabberListener(Listener):
 
         if "pm_list" in config:
             self.pm_list = config["pm_list"]
+            self.pm_filter = True
         else:
             self.pm_list = []
+            self.pm_filter = False
+
+        if "filter_list" in config:
+            self.filter_list = config["filter_list"]
+            self.filter = True
+        else:
+            self.filter_list = []
+            self.filter = False
 
         _log.info("{0} - Initializing Jabber client for: {1}".format(self.name, self.jid))
         self.client =  ClientXMPP(self.jid, self.password)
@@ -84,16 +93,31 @@ class JabberListener(Listener):
             msgFromParts = msg["from"].bare.split("@")
             msgFrom = msgFromParts[0]
             #PM filter
-            if msgFrom not in self.pm_list:
+            if self.pm_filter:
+                if msgFrom not in self.pm_list:
+                    _log.debug("{0} - Sender not in PM list, ignore".format(self.name))
+                    return
+
+            #text filter
+            if not self.textFilter(msgText):
+                 _log.debug("{0} - Message does not match a text filter, ignore".format(self.name))
                  return
+
         elif msg["type"] == "groupchat":
             msgChannelParts = msg["mucroom"].split("@")
             msgChannel = msgChannelParts[0]
             msgFrom = msg["mucnick"]
         else:
-            logging.warn("{0} - Unknown message type from Jabber: {1}".format(self.name, msg["type"]))
+            _log.warn("{0} - Unknown message type from Jabber: {1}".format(self.name, msg["type"]))
 
         message = Message(self, msgText, msgFrom, msgChannel, self.host)
-
-
         self.messageHandler(message)
+
+    def textFilter(text):
+        if not self.filter:
+            return True
+        for f in self.filter_list:
+            filter_re = re.compile(f)
+            if filter_re.search(text) is not None:
+                return True
+        return False
