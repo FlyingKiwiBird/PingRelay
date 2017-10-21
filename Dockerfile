@@ -4,8 +4,8 @@ ADD . /app
 RUN pip install -r requirements.txt
 
 #Install nano for logs
-apt-get update
-apt-get install nano
+RUN apt-get update
+RUN apt-get install nano
 
 # Port 4000 is the control server by default
 EXPOSE 4000
