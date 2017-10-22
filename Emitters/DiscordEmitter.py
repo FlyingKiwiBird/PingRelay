@@ -66,10 +66,6 @@ class DiscordEmitter(Emitter):
             message_str = self.formatter.format_message(message)
         else:
             message_str = str(message)
-        #alerts
-        if message.has_alert and not self.alertOnly:
-            alert_str = "@everyone this message matched alert(s): " + message.get_alert_str() + "\n"
-            message_str = alert_str + message_str
 
         for channel in channels:
             try:
