@@ -8,6 +8,7 @@ from datetime import datetime
 from threading import Thread
 from App import App
 from ControlServer import ControlServer
+from Reconnect import Reconnect
 
 
 def main():
@@ -19,6 +20,11 @@ def main():
     app = App(config)
     app.run()
 
+    #Reconnects in case of error
+    recon = Reconnect(app, config)
+    recon.start()
+
+    #Control server
     server = ControlServer(app, config)
     server.start()
 

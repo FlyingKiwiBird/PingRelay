@@ -111,7 +111,7 @@ class JabberListener(Listener):
             _log.warn("{0} - Unknown message type from Jabber: {1}".format(self.name, msg["type"]))
 
         message = Message(self, msgText, msgFrom, msgChannel, self.host)
-        self.relay_message(msg)
+        self.relay_message(message)
 
     def textFilter(self, text):
         if not self.filter:

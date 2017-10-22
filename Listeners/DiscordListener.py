@@ -93,9 +93,9 @@ class DiscordListener(Listener):
         text = self.get_names_from_mentions(message)
 
         sent_at = message.timestamp
-        msg = Message(self, text, sender, channel, server, sent_at)
+        message = Message(self, text, sender, channel, server, sent_at)
 
-        self.relay_message(msg)
+        self.relay_message(message)
 
     def get_names_from_mentions(self, message):
         mentions = message.mentions

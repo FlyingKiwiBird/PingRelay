@@ -129,9 +129,10 @@ class SlackListener(Listener):
                             msg = regex.sub(self.replace_user_id_with_name, msg)
 
                             message = Message(self, msg, user, channel, self.server, msgTime)
-                            self.relay_message(msg)
+                            self.relay_message(message)
 
             else:
-                delay = min(++delay, 10)
+                delay += 1
+                delay = min(delay, 10)
             time.sleep(delay)
         _log.debug("{0} - RTM due to Slack disconnect disconnected".format(self.name))

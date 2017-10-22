@@ -46,7 +46,6 @@ class ControlServer(threading.Thread):
             except Exception as err:
                 _log.debug("A connection was closed: {0}".format(err))
                 break
-            _log.debug("Got message: {0}".format(message_json))
             try:
                 message = json.loads(message_json)
             except Exception as err:
@@ -66,7 +65,6 @@ class ControlServer(threading.Thread):
 
     async def send(self, websocket, response):
         reaponse_json = json.dumps(response)
-        _log.debug("Sending message: {0}".format(reaponse_json))
         try:
             await websocket.send(reaponse_json)
         except Exception as err:

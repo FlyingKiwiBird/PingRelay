@@ -111,7 +111,6 @@ class App():
         else:
             return None
         listener.on_message_received(self.relay)
-        listener.on_stop(self.listener_closed)
         return listener
 
     def generate_emitter(self, config):
@@ -122,28 +121,6 @@ class App():
         elif(emitterType == EmitterType.DISCORD):
             emitter = DiscordEmitter(config, self.alertsOnly)
         return emitter
-
-##########  Handle closes
-
-    def listener_closed(self, listener):
-        _log.error("A listener was closed - {0}".format(listener.name))
-
-        if not listener.autoreconnect:
-            return
-
-        time.sleep(10)
-        self.reconnect_listener(listener)
-
-
-    def emitter_closed(self, emitter):
-        _log.error("A emitter was closed - {0}".format(emitter.name))
-
-        if not emitter.autoreconnect:
-            return
-
-        time.sleep(10)
-        self.reconnect_emitter(emitter)
-
 
 ################ Reconnect
 
