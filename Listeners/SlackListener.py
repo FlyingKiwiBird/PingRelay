@@ -82,6 +82,11 @@ class SlackListener(Listener):
                 if self.messageHandler is not None:
                     for event in events:
                         if event["type"] == "message":
+                            #Ignore channel joins
+                            if "subtype" in event:
+                                if event["subtype"] == "channel_join":
+                                    continue
+
                             if "text" not in event:
                                 continue
                             try:
@@ -89,6 +94,7 @@ class SlackListener(Listener):
                                 _log.debug("{0} - Got message from Slack RTM: {1}".format(self.name, msg))
                             except Exception:
                                 _log.debug("{0} - Got message from Slack RTM: (Can't display)".format(self.name))
+
                             #Get sender
                             try:
                                 user_info = self.client.api_call("users.info", user=event["user"])

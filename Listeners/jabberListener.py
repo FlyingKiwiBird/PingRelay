@@ -2,7 +2,7 @@ from .BaseListener import Listener
 from .ListenerType import ListenerType
 from Resources.Message import Message
 from sleekxmpp import ClientXMPP
-
+import re
 import logging
 _log = logging.getLogger("PingRelay")
 
