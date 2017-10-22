@@ -26,8 +26,8 @@ class MessageFormatter():
         if(placeholder == "message"):
             return self.message.message
         if(placeholder == "alerts"):
-            if message.has_alert:
-                return "this message matched alert(s): " + message.get_alert_str()
+            if self.message.has_alert:
+                return "this message matched alert(s): " + self.message.get_alert_str()
             else:
                 return ""
         if(placeholder == "time"):

@@ -61,9 +61,11 @@ class DiscordEmitter(Emitter):
         regex = r"@(everyone|here)"
         subst = r"`@\1`"
         message.message = re.sub(regex, subst, message.message)
+        _log.debug("{0} - Replaced @ command".format(self.name))
         #formatter
         if self.formatter is not None:
             message_str = self.formatter.format_message(message)
+            _log.debug("{0} - Formatted string".format(self.name))
         else:
             message_str = str(message)
 
