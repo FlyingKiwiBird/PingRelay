@@ -4,9 +4,10 @@ import logging
 _log = logging.getLogger("PingRelay")
 
 class MessageFormatter():
-    def __init__(self, message_format, time_format = "%Y-%m-%d %I:%M:%S %p"):
+    def __init__(self, message_format, alert_user="@here", time_format = "%Y-%m-%d %I:%M:%S %p"):
         self.format = message_format
         self.time_format = time_format
+        self.alert_user = alert_user
 
     def format_message(self, message):
         regex = re.compile(r"%{(\w+)}")
@@ -27,7 +28,7 @@ class MessageFormatter():
             return self.message.message
         if(placeholder == "alerts"):
             if self.message.has_alert:
-                return "this message matched alert(s): " + self.message.get_alert_str()
+                return self.alert_user + ": this message matched alert(s): " + self.message.get_alert_str() + "\n"
             else:
                 return ""
         if(placeholder == "time"):

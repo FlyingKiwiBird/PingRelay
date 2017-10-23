@@ -88,7 +88,11 @@ class JabberListener(Listener):
             return
 
         msgText = msg["body"]
-        if msg["type"] == "chat":
+        #Normal is default
+        if "type" not in msg:
+            msg["type"] = "normal"
+
+        if msg["type"] == "chat" or msg["type"] == "normal":
             msgChannel = "Direct Message"
             msgFromParts = msg["from"].bare.split("@")
             msgFrom = msgFromParts[0]
@@ -108,7 +112,7 @@ class JabberListener(Listener):
             msgChannel = msgChannelParts[0]
             msgFrom = msg["mucnick"]
         else:
-            _log.warn("{0} - Unknown message type from Jabber: {1}".format(self.name, msg["type"]))
+            _log.warn("{0} - Unknown message type from Jabber: {1}\n{2}".format(self.name, msg["type"], msg))
 
         message = Message(self, msgText, msgFrom, msgChannel, self.host)
         self.relay_message(message)
