@@ -75,8 +75,9 @@ class SlackListener(Listener):
             try:
                 events = self.client.rtm_read()
             except Exception as err:
-                _log.warn("{0} - Could not get RTM events {1}".format(self.name, err))
-
+                _log.error("{0} - Could not get RTM events {1}".format(self.name, err))
+                self.running = False
+                continue
             if events:
                 delay = 0
                 if self.messageHandler is not None:
@@ -135,4 +136,4 @@ class SlackListener(Listener):
                 delay += 1
                 delay = min(delay, 10)
             time.sleep(delay)
-        _log.debug("{0} - RTM due to Slack disconnect disconnected".format(self.name))
+        _log.error("{0} - RTM disconnected".format(self.name))
