@@ -1,5 +1,5 @@
 #Rename to Config.toml
-log_level = "DEBUG"
+log_level = "INFO"
 only_relay_alerts=false
 
 [[alerts]]

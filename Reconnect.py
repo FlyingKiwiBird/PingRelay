@@ -20,7 +20,6 @@ class Reconnect(threading.Thread):
 
     def run(self):
         while(True):
-            _log.debug("Checking for DC services")
             #Reconnect emitters
             for emitter in self.app.emitters:
                 if emitter.status() == ThreadStatus.Complete:
