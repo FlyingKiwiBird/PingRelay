@@ -47,6 +47,7 @@ class App():
 
     #This little guy makes the whole thing tick
     def relay(self, msg):
+        _log.info("Relaying message: {0}".format(msg))
         self.check_alerts(msg)
         if self.alertsOnly:
             if not msg.has_alert:

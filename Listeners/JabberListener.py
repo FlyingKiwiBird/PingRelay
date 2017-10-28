@@ -77,7 +77,7 @@ class JabberListener(Listener):
             self.client.plugin['xep_0045'].joinMUC(room_addr, self.nick)
 
     def onDisconnect(self, event):
-        logging.warning("{0} - Disconnected from: {1}:{2}".format(self.name, self.host, self.port))
+        _log.warning("{0} - Disconnected from: {1}:{2}".format(self.name, self.host, self.port))
 
     def parseMessage(self, msg):
         try:
