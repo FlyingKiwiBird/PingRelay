@@ -8,6 +8,8 @@ from Emitters.EmitterType import EmitterType
 from Emitters.CliEmitter import CliEmitter
 from Emitters.DiscordEmitter import DiscordEmitter
 
+from Resources.ServiceType import ServiceType
+
 from pprint import pprint
 from datetime import datetime
 
@@ -123,6 +125,12 @@ class App():
         return emitter
 
 ################ Reconnect
+
+    def reconnect_service(self, service):
+        if service.connectionType == ServiceType.LISTENER:
+            self.reconnect_listener(service)
+        elif service.connectionType == ServiceType.EMITTER:
+            self.reconnect_emitter(service)
 
     def reconnect_listener(self, listener):
         _log.info("Attempting to reconnect - {0}".format(listener.name))

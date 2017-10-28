@@ -6,15 +6,21 @@ class ThreadedService(threading.Thread):
 
     service_id = 1
 
-    def __init__(self):
+    def __init__(self, config):
+        threading.Thread.__init__(self)
         self.connectionType = None
         self.stop_handler = None
         self.start_time = None
         self.end_time = None
+        self.config = config
         self.started = False
+        if "name" in config:
+            self.name = config["name"]
+        else:
+            self.name = None
         self.id = ThreadedService.service_id
         ThreadedService.service_id += 1
-        threading.Thread.__init__(self)
+
 
     def start(self):
         self.start_time = datetime.now()
@@ -53,6 +59,11 @@ class ThreadedService(threading.Thread):
         self.end_time = datetime.now()
         if self.stop_handler is not None:
             self.stop_handler(self)
+
+    def __str__(self):
+        if self.name is not None:
+            return self.name
+        return "Unknown"
 
 
 class ThreadStatus(Enum):

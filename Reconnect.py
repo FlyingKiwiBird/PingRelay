@@ -13,8 +13,8 @@ class Reconnect(threading.Thread):
         threading.Thread.__init__(self)
         self.app = application
         self.config = config
-        if "reconnect_time" in self.config:
-            self.interval = self.config["reconnect_time"]
+        if "reconnect_interval" in self.config:
+            self.interval = self.config["reconnect_interval"]
         else:
             self.interval = 10
 
@@ -25,12 +25,31 @@ class Reconnect(threading.Thread):
                 if emitter.status() == ThreadStatus.Complete:
                     if emitter.autoreconnect:
                         self.app.reconnect_emitter(emitter)
+                else:
+                    self.autorestart(emitter)
+
+
 
             #Reconnect listeners
             for listener in self.app.listeners:
                 if listener.status() == ThreadStatus.Complete:
                     if listener.autoreconnect:
                         self.app.reconnect_listener(listener)
+                else:
+                    self.autorestart(listener)
 
             #Wait
             time.sleep(self.interval)
+
+    def autorestart(self, service):
+        if "autorestart_interval" in service.config:
+            restart_intv = service.config["autorestart_interval"]
+            uptime = service.uptime()
+            uptime_seconds = uptime.total_seconds()
+            _log.debug("{0} has been up for {1} seconds".format(service, uptime_seconds))
+            if  uptime_seconds >= restart_intv:
+                _log.info("Auto restarting service: '{0}' it was alive for {1}".format(service, uptime))
+                service.stop()
+                self.app.reconnect_service(service)
+                return True
+        return False

@@ -6,8 +6,7 @@ class Emitter(ThreadedService):
 
 
     def __init__(self, config, alertOnly = False):
-        super(Emitter, self).__init__()
-        self.config = config
+        super(Emitter, self).__init__(config)
         self.alertOnly = alertOnly
         self.emitType = None
         self.name = None

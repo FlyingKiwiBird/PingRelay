@@ -6,8 +6,7 @@ class Listener(ThreadedService):
 
 
     def __init__(self, config):
-        super(Listener, self).__init__()
-        self.config = config
+        super(Listener, self).__init__(config)
         self.listenerType = None
         self.client = None
         self.name = None

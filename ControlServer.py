@@ -113,10 +113,7 @@ class ControlServer(threading.Thread):
             return
         if match.status() == ThreadStatus.Running:
             match.stop()
-        if match.connectionType == ServiceType.LISTENER:
-            self.app.reconnect_listener(match)
-        elif match.connectionType == ServiceType.EMITTER:
-            self.app.reconnect_emitter(match)
+        self.app.reconnect_service(match)
 
         details = self.get_details(match)
         await self.send(websocket, {"Status": "OK", "Response": "Reconnect",  "connection":details})
