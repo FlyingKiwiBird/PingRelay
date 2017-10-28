@@ -11,7 +11,7 @@ Gather all your modern-ish ping apps into one place?  This tool is for you!
 * Discord
 
 ## Install
-1. Install python 3.5+
+1. Install python 3.6+
 2. clone this repo
 3. Run `pip install -r requirements.txt`
 ### Recommended but optional: use Supervisor
