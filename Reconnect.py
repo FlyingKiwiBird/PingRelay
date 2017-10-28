@@ -46,7 +46,6 @@ class Reconnect(threading.Thread):
             restart_intv = service.config["autorestart_interval"]
             uptime = service.uptime()
             uptime_seconds = uptime.total_seconds()
-            _log.debug("{0} has been up for {1} seconds".format(service, uptime_seconds))
             if  uptime_seconds >= restart_intv:
                 _log.info("Auto restarting service: '{0}' it was alive for {1}".format(service, uptime))
                 service.stop()
