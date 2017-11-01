@@ -63,8 +63,8 @@ class App():
         else:
             all_alerts = self.alerts
         for alert in all_alerts:
-            alert_re = re.compile(alert["filter"])
-            if alert_re.search(message.message, re.IGNORECASE) is not None:
+            alert_re = re.compile(alert["filter"], re.IGNORECASE)
+            if alert_re.search(message.message) is not None:
                 _log.debug("Matched alert {0}".format(alert["name"]))
                 message.add_alert(alert["name"])
 
