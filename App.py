@@ -75,6 +75,7 @@ class App():
             try:
                 listener = self.generate_listener(l)
                 if listener is None:
+                    _log.error("Bad listener format: {0}".format(l))
                     continue
                 listener.start()
                 self.listeners.append(listener)
