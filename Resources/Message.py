@@ -1,4 +1,5 @@
 from datetime import datetime
+import discord
 
 class Message:
 
@@ -14,7 +15,7 @@ class Message:
         self.alerts = []
 
     def __str__(self):
-        time_str = self.time.strftime("%Y-%m-%d %I:%M:%S %p")
+        time_str = self.time.strftime("%Y-%m-%d %H:%M:%S")
         return "[{0}] {1}>{2}>{3}: {4}".format(time_str, self.server, self.channel, self.sender, self.message)
 
     def add_alert(self, alert):
@@ -23,3 +24,14 @@ class Message:
 
     def get_alert_str(self):
         return ", ".join(self.alerts)
+
+    def embed(self, time_fmt="%Y-%m-%d %H:%M:%S"):
+        embed = discord.Embed(description=self.message)
+        if self.has_alert:
+            embed.add_field(name="Alerts", value=self.get_alert_str(), inline=False)
+            embed.color=0xff0000
+        embed.add_field(name="Server", value=self.server, inline=True)
+        embed.add_field(name="Channel", value=self.channel, inline=True)
+        embed.add_field(name="Author", value=self.sender, inline=True)
+        embed.set_footer(text=self.time.strftime(time_fmt))
+        return embed

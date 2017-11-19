@@ -31,6 +31,7 @@ class DiscordEmitter(Emitter):
             else:
                 self.formatter = MessageFormatter(config["format"])
 
+        self.use_embed = config.get("use_embed", True)
         _log.info("{0} - Initializing Discord client".format(self.name))
 
     def stop(self):
@@ -63,7 +64,9 @@ class DiscordEmitter(Emitter):
         message.message = re.sub(regex, subst, message.message)
         _log.debug("{0} - Replaced @ command".format(self.name))
         #formatter
-        if self.formatter is not None:
+        if self.use_embed:
+            pass
+        elif self.formatter is not None:
             message_str = self.formatter.format_message(message)
             _log.debug("{0} - Formatted string".format(self.name))
         else:
@@ -71,7 +74,13 @@ class DiscordEmitter(Emitter):
 
         for channel in channels:
             try:
-                await self.client.send_message(channel, content=message_str)
+                if self.use_embed:
+                    content = None
+                    if message.has_alert:
+                        content = "@here:"
+                    await self.client.send_message(channel, content=content, embed=message.embed())
+                else:
+                    await self.client.send_message(channel, content=message_str)
                 _log.debug("{0} - Sent message to channel '{1}' on '{2}'".format(self.name, channel.name, channel.server.name))
             except Exception as err:
                 _log.error("{0} - Could not send message: {1}".format(self.name, err))

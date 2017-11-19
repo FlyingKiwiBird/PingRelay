@@ -30,6 +30,7 @@ class App():
         else:
             self.alertsOnly = False
 
+        self.always_alert = config.get("always_alert", False)
         self.alerts = []
         if "alerts" in config:
             self.alerts = config["alerts"]
@@ -58,6 +59,8 @@ class App():
 
     def check_alerts(self, message):
         _log.debug("Checking message for alerts: '{0}'".format(message.message))
+        if self.always_alert:
+            message.add_alert("Perpetual")
         if "alerts" in message.listener.config:
             all_alerts = self.alerts + message.listener.config["alerts"]
         else:
