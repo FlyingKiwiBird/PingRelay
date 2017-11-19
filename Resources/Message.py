@@ -3,7 +3,7 @@ import discord
 
 class Message:
 
-    def __init__(self, listener, message, sender, channel, server, time = datetime.now()):
+    def __init__(self, listener, message, sender, channel, server, time = datetime.utcnow()):
         self.listener = listener
         self.message = message
         self.sender = sender
