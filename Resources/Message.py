@@ -3,13 +3,13 @@ import discord
 
 class Message:
 
-    def __init__(self, listener, message, sender, channel, server, time = datetime.utcnow()):
+    def __init__(self, listener, message, sender, channel, server, time = None):
         self.listener = listener
         self.message = message
         self.sender = sender
         self.channel = channel
         self.server = server
-        self.time = time
+        self.time = time or datetime.utcnow()        
 
         self.has_alert = False
         self.alerts = []
