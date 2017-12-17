@@ -21,19 +21,12 @@ class DiscordListener(Listener):
 
     def __init__(self, config):
         super(DiscordListener, self).__init__(config)
-        self.email = config["email"]
-        self.password = config["password"]
-        self.name = config["name"]
-
-        if "pm_list" in config:
-            self.pm_list = config["pm_list"]
-        else:
-            self.pm_list = []
-
-        if "channel_list" in self.config:
-            self.channel_list = config["channel_list"]
-        else:
-            self.channel_list = []
+        self.email = config.get("email")
+        self.password = config.get("password")
+        self.token = config.get("token")
+        self.name = config.get("name")
+        self.pm_list = config.get("pm_list", [])
+        self.channel_list = config.get("channel_list", [])
 
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
@@ -54,7 +47,10 @@ class DiscordListener(Listener):
 
     async def runDiscord(self):
         try:
-            await self.client.start(self.email, self.password)
+            if self.token is None:
+                await self.client.start(self.email, self.password)
+            else:
+                await self.client.start(self.token)
         except Exception as err:
             logging.warn("{0} - Discord has disconnected: {1}".format(self.name, err))
 
