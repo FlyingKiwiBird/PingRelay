@@ -9,6 +9,7 @@ from Emitters.CliEmitter import CliEmitter
 from Emitters.DiscordEmitter import DiscordEmitter
 
 from Resources.ServiceType import ServiceType
+from Resources.Anonymizer import anonymize
 
 from pprint import pprint
 from datetime import datetime
@@ -48,8 +49,9 @@ class App():
 
     #This little guy makes the whole thing tick
     def relay(self, msg):
-        _log.info("Relaying message: {0}".format(msg))
+        anonymize(msg)
         self.check_alerts(msg)
+        _log.info("Relaying message: {0}".format(msg))
         if self.alertsOnly:
             if not msg.has_alert:
                 return
@@ -58,7 +60,6 @@ class App():
             e.emit(msg)
 
     def check_alerts(self, message):
-        _log.debug("Checking message for alerts: '{0}'".format(message.message))
         if self.always_alert:
             message.add_alert("Perpetual")
         if "alerts" in message.listener.config:

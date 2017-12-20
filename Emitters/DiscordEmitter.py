@@ -78,8 +78,10 @@ class DiscordEmitter(Emitter):
                     content = None
                     if message.has_alert:
                         content = "@here:"
+                    _log.debug("Using embed method")
                     await self.client.send_message(channel, content=content, embed=message.embed())
                 else:
+                    _log.debug("Using text method")
                     await self.client.send_message(channel, content=message_str)
                 _log.debug("{0} - Sent message to channel '{1}' on '{2}'".format(self.name, channel.name, channel.server.name))
             except Exception as err:

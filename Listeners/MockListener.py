@@ -14,14 +14,14 @@ class MockListener(Listener):
     def __init__(self, config):
         super(MockListener, self).__init__(config)
         self.running = False
-        self.name = config["name"]
-        self.intv = config["interval"]
-        self.enabled = config["enabled"]
+        self.name = config.get("name","Mock")
+        self.intv = config.get("interval", 10)
+        self.enabled = config.get("enabled", False)
 
-        self.message = config["message"]
-        self.server = config["server"]
-        self.channel = config["channel"]
-        self.sender = config["sender"]
+        self.message = config.get("message", "Mock")
+        self.server = config.get("server", "Mock")
+        self.channel = config.get("channel", "Mock")
+        self.sender = config.get("sender", "Mock")
         _log.debug("{0} - Setup mock listener".format(self.name))
 
     def run(self):
