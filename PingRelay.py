@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import sys
 from pathlib import Path
 import logging
 import toml
@@ -32,25 +33,38 @@ def main():
 def initLogging(dir, config):
     time_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    if "log_level" in config:
-        log_name = config["log_level"]
-    else:
-        log_name = "INFO"
-
-    if "module_log_level" in config:
-        module_log_level = getattr(logging, config["module_log_level"] , "WARNING")
-    else:
-        module_log_level = getattr(logging, "WARNING")
+    log_name = config.get("log_level", "INFO")
+    mod_log_level = config.get("module_log_level", "WARN")
 
     log_path =  os.path.join(dir, 'logs/pingRelay-{0}.{1}.log'.format(time_str, log_name.lower()))
-    log_level = getattr(logging, log_name, "INFO")
+    log_level = _toLogLevel(log_name)
+    mod_level = _toLogLevel(mod_log_level)
+    
+    log_format = logging.Formatter('%(asctime)s - %(levelname)s - [%(name)s] %(module)s.%(funcName)s:%(lineno)d - %(message)s')
+    
+    #File handler
+    log_file_handler = logging.FileHandler(log_path)
+    log_file_handler.setFormatter(log_format)
 
-    logging.basicConfig(filename=log_path,level=module_log_level, format='%(asctime)s - %(levelname)s - [%(name)s] %(module)s.%(funcName)s:%(lineno)d - %(message)s')
+    #Stream handler
+    log_stream_handler = logging.StreamHandler(sys.stdout)
+    log_stream_handler.setFormatter(log_format)
+    
+    #Main log
+    root = logging.getLogger()
+    root.setLevel(mod_level)
+    root.addHandler(log_file_handler)
+    root.addHandler(log_stream_handler)
+    log = logging.getLogger("PingRelay")
+    log.setLevel(log_level)
+    log.error("Log starting with level: '{}', module level: '{}'".format(log_name, mod_log_level))
 
-    global _log
-    _log = logging.getLogger("PingRelay")
-    _log.setLevel(log_level)
-    _log.debug("Log starts here")
+def _toLogLevel(name):
+    log_level = getattr(logging, name.upper(), None)
+    if not isinstance(log_level, int):
+        raise ValueError('Invalid log level: %s' % name)
+    else:
+        return log_level
 
 def loadConfig(dir):
         #Import config from the TOML file
