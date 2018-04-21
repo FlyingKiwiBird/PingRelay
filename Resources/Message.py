@@ -18,6 +18,10 @@ class Message:
         time_str = self.time.strftime("%Y-%m-%d %H:%M:%S")
         return "[{0}] {1}>{2}>{3}: {4}".format(time_str, self.server, self.channel, self.sender, self.message)
 
+    @property
+    def search_text(self):
+        return "CHANNEL: {0}\nSENDER: {1}\nMESSAGE: {2}".format(self.channel, self.sender, self.message)
+
     def add_alert(self, alert):
         self.has_alert = True
         self.alerts.append(alert)
