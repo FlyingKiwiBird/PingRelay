@@ -76,7 +76,7 @@ class DiscordEmitter(Emitter):
                 if self.use_embed:
                     content = None
                     if message.has_alert:
-                        content = "@here:"
+                        content = "@everyone"
                     _log.debug("Using embed method")
                     await self.client.send_message(channel, content=content, embed=message.embed())
                 else:

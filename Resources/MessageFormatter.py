@@ -4,7 +4,7 @@ import logging
 _log = logging.getLogger("PingRelay")
 
 class MessageFormatter():
-    def __init__(self, message_format, alert_user="@here", time_format = "%Y-%m-%d %I:%M:%S %p"):
+    def __init__(self, message_format, alert_user="@everyone", time_format = "%Y-%m-%d %I:%M:%S %p"):
         self.format = message_format
         self.time_format = time_format
         self.alert_user = alert_user
