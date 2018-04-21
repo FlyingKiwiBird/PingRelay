@@ -70,11 +70,14 @@ class JabberListener(Listener):
     def joinRooms(self):
         if "channel_list" not in self.config:
             return
-        rooms = self.config["channel_list"]
+        rooms = self.config.get("channel_list")
         for r in rooms:
             room_addr = "{0}@{1}".format(r, self.host)
             _log.debug("{0} - Attempting to join {1} as {2}".format(self.name, room_addr, self.nick))
-            self.client.plugin['xep_0045'].joinMUC(room_addr, self.nick)
+            try:
+                self.client.plugin['xep_0045'].joinMUC(room_addr, self.nick)
+            except Exception:
+               _log.exception("An error while joining room {} as {}".format(room_addr, self.nick))
 
     def onDisconnect(self, event):
         _log.warning("{0} - Disconnected from: {1}:{2}".format(self.name, self.host, self.port))
@@ -89,10 +92,11 @@ class JabberListener(Listener):
 
         msgText = msg["body"]
         #Normal is default
-        if "type" not in msg:
-            msg["type"] = "normal"
+        _log.debug("Message type is: {}".format(msg["type"]))
 
-        if msg["type"] == "chat" or msg["type"] == "normal":
+        msgType = msg.get("type", "normal")
+
+        if msgType == "chat" or msgType == "normal":
             msgChannel = "Direct Message"
             msgFromParts = msg["from"].bare.split("@")
             msgFrom = msgFromParts[0]
@@ -107,7 +111,7 @@ class JabberListener(Listener):
                  _log.debug("{0} - Message does not match a text filter, ignore".format(self.name))
                  return
 
-        elif msg["type"] == "groupchat":
+        elif msgType == "groupchat":
             msgChannelParts = msg["mucroom"].split("@")
             msgChannel = msgChannelParts[0]
             msgFrom = msg["mucnick"]

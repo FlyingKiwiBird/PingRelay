@@ -9,7 +9,7 @@ _log = logging.getLogger("PingRelay")
 
 class MockListener(Listener):
 
-    listenerType = ListenerType.DISCORD
+    listenerType = ListenerType.MOCK
 
     def __init__(self, config):
         super(MockListener, self).__init__(config)
