@@ -17,19 +17,18 @@ class DiscordEmitter(Emitter):
 
     def __init__(self, config, alertOnly):
         super(DiscordEmitter, self).__init__(config, alertOnly)
-        self.token = config["token"]
-        self.name = config["name"]
-        self.channel = config["default_channel"]
-        if "alert_channel" in config:
-            self.alert_channel = config["alert_channel"]
+        self.token = config.get("token")
+        self.name = config.get("name")
+        self.channel = config.get("default_channel")
+        self.alert_channel = config.get("alert_channel")
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
         self.client = discord.Client(loop=self.loop)
         if "format" in config:
             if "time_format" in config:
-                self.formatter = MessageFormatter(config["format"], config["time_format"])
+                self.formatter = MessageFormatter(config.get("format"), config.get("time_format"))
             else:
-                self.formatter = MessageFormatter(config["format"])
+                self.formatter = MessageFormatter(config.get("format"))
 
         self.use_embed = config.get("use_embed", True)
         _log.info("{0} - Initializing Discord client".format(self.name))
@@ -92,18 +91,26 @@ class DiscordEmitter(Emitter):
         channel_list = []
         alert = False
 
+        #If alert channel is set, use it
         if self.alert_channel is not None:
             if message.has_alert:
                 channel_list.append(self.alert_channel)
                 alert = True
-
+        
+        #Otherwise get it from the channel list
         if not alert:
             if "channels" in self.config:
                 for ch in self.config["channels"]:
                     if message.server in ch["from_server_list"]:
-                        channel_list = ch["to_channel_list"]
-                        break
+                        #Check if there is a channel filter
+                        ch_filter = ch.get("from_channel_filter")
+                        if ch_filter:
+                            if message.channel in ch_filter:
+                                channel_list.extend(ch["to_channel_list"])
+                        else:
+                            channel_list.extend(ch["to_channel_list"])
 
+        #Get channel from the channel id
         channels = []
         for channel_id in channel_list:
             channel = self.client.get_channel(channel_id)

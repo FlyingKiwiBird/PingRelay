@@ -1,3 +1,5 @@
+# Due to discord TOS this no longer is avaliable #
+
 from .BaseListener import Listener
 from .ListenerType import ListenerType
 from Resources.Message import Message

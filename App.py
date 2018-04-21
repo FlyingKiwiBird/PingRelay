@@ -1,6 +1,5 @@
 from Listeners.JabberListener import JabberListener
 from Listeners.SlackListener import SlackListener
-from Listeners.DiscordListener import DiscordListener
 from Listeners.MockListener import MockListener
 from Listeners.ListenerType import ListenerType
 
@@ -112,8 +111,6 @@ class App():
             listener = JabberListener(config)
         elif(listenType == ListenerType.SLACK):
             listener = SlackListener(config)
-        elif(listenType == ListenerType.DISCORD):
-            listener = DiscordListener(config)
         elif (listenType == ListenerType.MOCK):
             listener = MockListener(config)
         else:
@@ -172,4 +169,4 @@ class App():
             emitter.start()
             self.emitters.append(emitter)
         except Exception as err:
-            _log.error("Could not start listener '{0}': {1}".format(l, err))
+            _log.error("Could not start listener '{0}': {1}".format(e, err))
