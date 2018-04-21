@@ -120,12 +120,13 @@ class DiscordEmitter(Emitter):
                 channels.append(channel)
 
         #Send to default if no match
-        if(len(channels) == 0):
-            channel = self.client.get_channel(default_channel_id)
-            if channel is None:
-                _log.error("{0} - The default channel (ID = '{1}') is not valid".format(self.name, default_channel_id))
-            else:
-                channels.append(channel)
+        if default_channel_id is not None:
+            if(len(channels) == 0):
+                channel = self.client.get_channel(default_channel_id)
+                if channel is None:
+                    _log.error("{0} - The default channel (ID = '{1}') is not valid".format(self.name, default_channel_id))
+                else:
+                    channels.append(channel)
 
         return channels
 
