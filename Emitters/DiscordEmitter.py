@@ -113,7 +113,7 @@ class DiscordEmitter(Emitter):
         #Get channel from the channel id
         channels = []
         for channel_id in channel_list:
-            channel = self.client.get_channel(channel_id)
+            channel = self.client.get_channel(int(channel_id))
             if channel is None:
                 _log.error("{0} - The channel ID '{1}' is not valid".format(self.name, channel_id))
             else:
@@ -122,7 +122,7 @@ class DiscordEmitter(Emitter):
         #Send to default if no match
         if default_channel_id is not None:
             if(len(channels) == 0):
-                channel = self.client.get_channel(default_channel_id)
+                channel = self.client.get_channel(int(default_channel_id))
                 if channel is None:
                     _log.error("{0} - The default channel (ID = '{1}') is not valid".format(self.name, default_channel_id))
                 else:
