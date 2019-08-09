@@ -78,10 +78,10 @@ class DiscordEmitter(Emitter):
                     if message.has_alert:
                         content = "@everyone"
                     _log.debug("Using embed method")
-                    await channel.send_message(content=content, embed=message.embed())
+                    await channel.send(content=content, embed=message.embed())
                 else:
                     _log.debug("Using text method")
-                    await channel.send_message(content=message_str)
+                    await channel.send(content=message_str)
                 _log.debug("{0} - Sent message to channel '{1}' on '{2}'".format(self.name, channel.name, channel.server.name))
             except Exception as err:
                 _log.error("{0} - Could not send message: {1}".format(self.name, err))
